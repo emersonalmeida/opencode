@@ -1,0 +1,4 @@
+
+.container-sm { max-width: 40rem; }
+.container { max-width: var(--container-max); }
+.container-lg { max-width: 96rem; }

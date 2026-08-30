@@ -1,0 +1,50 @@
+# syntax=docker/dockerfile:1
+# ============================================================
+# appdatareview SEM Ollama embutido — app + servidor + voz; a IA vem de um
+# Ollama EXTERNO (o do host, outro PC da rede, ou um servidor de IA).
+#
+#   docker compose up --build ollama-external
+#   OLLAMA_HOST=http://192.168.1.10:11434 docker compose up ollama-external
+# ============================================================
+
+FROM node:20-bookworm-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      python3 python3-pip python3-venv \
+      ffmpeg espeak-ng \
+      curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY requirements-voice.txt ./
+RUN python3 -m venv .venv \
+    && .venv/bin/pip install --no-cache-dir --upgrade pip \
+    && .venv/bin/pip install --no-cache-dir -r requirements-voice.txt
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY . .
+ENV VITE_SUPABASE_PROJECT_ID=local \
+    VITE_SUPABASE_PUBLISHABLE_KEY=local-anon-key \
+    VITE_SUPABASE_URL=http://localhost:8787
+RUN npm run build
+
+COPY docker/entrypoint-no-ollama.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENV PORT=8787 \
+    OLLAMA_URL=http://host.docker.internal:11434 \
+    OLLAMA_MODEL=gemma3:12b \
+    WHISPER_MODEL=small \
+    PIPER_MODEL=pt_BR-faber-medium
+
+EXPOSE 8080 8787
+VOLUME ["/root/.local/share/piper-voices", "/root/.cache/huggingface"]
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s \
+  CMD curl -fsS http://localhost:8787/health >/dev/null || exit 1
+
+CMD ["/entrypoint.sh"]

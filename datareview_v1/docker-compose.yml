@@ -1,0 +1,76 @@
+# ============================================================
+# appdatareview — Docker Compose (3 modos)
+#
+#   docker compose up --build                    # FULL: tudo num container
+#                                                #   (app + Ollama + voz)
+#   docker compose up --build ollama-external    # app+voz; IA num Ollama
+#                                                #   EXTERNO (host ou outro PC)
+#   docker compose --profile gpu up --build      # FULL + GPU NVIDIA p/ IA/voz
+#
+# Modelos de IA e de voz ficam em volumes nomeados — baixados só na 1ª vez.
+# ============================================================
+
+services:
+  # ---- FULL: app + servidor + voz + Ollama embutido (padrão) ----
+  app:
+    build: .
+    ports:
+      - "8080:8080"   # frontend (Vite)
+      - "8787:8787"   # servidor local (edge functions / IA / voz)
+    volumes:
+      - ollama-models:/root/.ollama
+      - piper-voices:/root/.local/share/piper-voices
+      - hf-cache:/root/.cache/huggingface
+    environment:
+      # Troque o modelo padrão aqui (ex.: gemma3:4b em máquinas fracas).
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-gemma3:12b}
+      WHISPER_MODEL: ${WHISPER_MODEL:-small}
+    restart: unless-stopped
+
+  # ---- FULL + GPU NVIDIA (docker compose --profile gpu up) ----
+  app-gpu:
+    profiles: ["gpu"]
+    build: .
+    ports:
+      - "8080:8080"
+      - "8787:8787"
+    volumes:
+      - ollama-models:/root/.ollama
+      - piper-voices:/root/.local/share/piper-voices
+      - hf-cache:/root/.cache/huggingface
+    environment:
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-gemma3:12b}
+      WHISPER_MODEL: ${WHISPER_MODEL:-small}
+      WHISPER_DEVICE: cuda
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  # ---- Sem Ollama embutido: app + voz; IA num Ollama externo ----
+  #   Útil para: usar o Ollama que já roda no host, ou apontar para um
+  #   servidor de IA na rede. Defina OLLAMA_HOST=http://<ip-do-ollama>:11434
+  ollama-external:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.no-ollama
+    ports:
+      - "8080:8080"
+      - "8787:8787"
+    volumes:
+      - piper-voices:/root/.local/share/piper-voices
+      - hf-cache:/root/.cache/huggingface
+    environment:
+      OLLAMA_URL: ${OLLAMA_HOST:-http://host.docker.internal:11434}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # alcança o Ollama do host Linux
+    restart: unless-stopped
+
+volumes:
+  ollama-models:
+  piper-voices:
+  hf-cache:

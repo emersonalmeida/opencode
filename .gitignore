@@ -1,0 +1,41 @@
+# Dependências
+node_modules/
+.pnpm-store/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+.vite/
+
+# Ambiente
+.env
+.env.*
+!.env.example
+
+# IDE e SO
+.DS_Store
+.idea/
+.vscode/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Git Canvas (snapshot local)
+.git-canvas/
+
+# Dados coletados / raw — nunca versionar
+data/
+data/raw/
+
+# Python venv (voz/ReclameAqui)
+.venv/
+
+# Testes e2e
+/test-results/
+playwright-report/
+
+# Artefatos de build de versões
+public/versions/
+.version-build/

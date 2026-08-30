@@ -1,0 +1,33 @@
+.hero {
+  background: radial-gradient(120% 100% at 20% 0%, color-mix(in srgb, var(--color-brand-500) 12%, transparent), transparent 60%);
+  padding-block: var(--space-8);
+}
+.form {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+.form input {
+  flex: 1;
+}
+.error {
+  color: var(--color-danger);
+  margin-top: var(--space-3);
+}
+.results {
+  padding-block: var(--space-8);
+}
+.list {
+  ​display: grid;
+  gap: var(--space-2);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.item {
+  padding-block: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+}
+.item:last-child {
+  border-bottom: 0;
+}

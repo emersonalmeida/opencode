@@ -1,0 +1,18 @@
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.icon {
+  display: inline-flex;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+.icon svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+.input {
+  flex: 1;
+}

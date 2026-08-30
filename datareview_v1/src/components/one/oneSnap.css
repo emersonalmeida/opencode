@@ -1,0 +1,42 @@
+/* One Page — slides fullscreen com snap vertical.
+ * Container: rolagem vertical com snap obrigatório; cada seção = 100% da
+ * altura do container (que é a viewport menos o header do AppShell).
+ * Conteúdo maior que a seção rola INTERNAMENTE (a seção nunca estoura).
+ */
+.one-snap-container {
+  height: 100%;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
+}
+
+.one-snap-section {
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* o corpo interno rola, a seção não */
+}
+
+.one-snap-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+/* Teclado leitor de tela: seções navegáveis por Tab sem prender o foco. */
+.one-snap-section:focus-visible {
+  outline: 2px solid hsl(var(--primary) / 0.6);
+  outline-offset: -2px;
+}
+
+/* prefers-reduced-motion: snap sem animação suave. */
+@media (prefers-reduced-motion: reduce) {
+  .one-snap-container {
+    scroll-behavior: auto;
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "core-next",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Nova base nuclear: pesquisa → coleta → dataset → IA. Reconstrução isolada do projeto original (que permanece intacto).",
+  "scripts": {
+    "dev": "vite",
+    "dev:server": "tsx watch server/index.ts",
+    "dev:all": "concurrently -n web,api -c magenta,cyan \"npm:dev\" \"npm:dev:server\"",
+    "build": "vite build",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.server.json --noEmit",
+    "test": "node --import tsx --test tests/**/*.test.ts",
+    "test:domain": "node --import tsx --test tests/**/*.test.ts"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.16.5",
+    "@types/react": "^18.3.23",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.5.2",
+    "concurrently": "^9.1.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.8.3",
+    "vite": "^5.4.19"
+  }
+}

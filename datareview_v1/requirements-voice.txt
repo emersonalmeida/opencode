@@ -1,0 +1,12 @@
+# Backends de voz locais do Chat com voz (/chat-voz).
+# Instale de uma vez (no venv criado por scripts/setup-voice.sh):
+#   .venv/bin/pip install -r requirements-voice.txt
+faster-whisper>=1.1   # voz → texto (Whisper local; usa GPU NVIDIA quando há)
+piper-tts>=1.2        # texto → voz neural pt-BR (modelo baixa na 1ª síntese)
+
+# Bypass de fingerprint TLS (Cloudflare) — fonte ReclameAqui
+curl_cffi>=0.7
+
+# Bypass forte do Cloudflare via navegador real — fonte ReclameAqui
+# (depois de instalar: python3 -m playwright install chromium)
+playwright>=1.40

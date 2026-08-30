@@ -1,0 +1,45 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Venv Python dos backends de voz (scripts/setup-voice.sh)
+.venv/
+
+# Ambiente local (copie de .env.example) — nunca versionar
+.env
+
+# Git Canvas: snapshot gerado por scripts/git-canvas-snapshot.mjs
+.git-canvas/
+
+# Camada RAW (server/lib/rawStore): dados coletados NUNCA são commitados
+data/
+
+# Builds estáticos de versões (scripts/build-version.mjs) — artefatos locais
+public/versions/
+.version-build/
+
+# Playwright relatorios
+/test-results/
+playwright-report/
+

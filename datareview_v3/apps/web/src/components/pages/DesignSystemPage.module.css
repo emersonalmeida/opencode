@@ -1,0 +1,240 @@
+.page {
+  display: grid;
+  gap: var(--space-6);
+  padding-block: var(--space-6);
+}
+.hero {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  border:	1px solid var(--color-border);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-brand-500) 10%, transparent), transparent 60%, color-mix(in srgb, var(--color-info-600) 8%, transparent));
+}
+.heroHead {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+.heroIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--color-brand-500), var(--color-info-600)));
+  color: var(--color-text-inverse);
+  flex-shrink: 0;
+}
+.heroIcon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.heroCopy {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+.heroMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.chip {
+  border:	1px solid var(--color-border);
+  background: var(--color-bg-elevated);
+  color: var(--color-text);
+  border-radius: var(--radius-full);
+  padding-inline: var(--space-3);
+  padding-block: var(--space-1);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+.chip:hover {
+  border-color: var(--color-brand-500);
+  color: var(--color-brand-500);
+}
+.section {
+  display: grid;
+  gap: var(--space-3);
+}
+.sectionBody {
+  display: grid;
+  gap: var(--space-4);
+}.swatches {
+ display: grid;
+ grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr)));
+ gap: var(--space-2);
+}
+.swatch {
+ display: grid;
+ gap: var(--space-1);
+ text-align: left;
+ border:	1px solid var(--color-border);
+ border-radius: var(--radius-md);
+ background: var(--color-bg-elevated);
+ padding: var(--space-2);
+ cursor: pointer;
+}
+.swatch:hover {
+ border-color: var(--color-brand-500);
+}
+.swatchDots {
+ display: flex;
+ gap: var(--space-1);
+}
+.dot {
+ width: 2rem;
+ height: 2rem;
+ border-radius: var(--radius-sm);
+ border:	1px solid var(--color-border);
+}
+.swatchName {
+ font-size: var(--font-size-sm);
+ font-weight: 600;
+ margin: 0;
+}
+.swatchVar {
+ font-size: var(--font-size-xs);
+ color: var(--color-text-muted);
+ font-family: var(--font-family-mono);
+ margin: 0;
+}
+.typeRows { display: grid; gap: var(--space-1); }
+.typeRow {
+ display: flex;
+ align-items: baseline;
+ gap: var(--space-3);
+ padding: var(--space-2);
+ border-radius: var(--radius-sm);
+ cursor: pointer;
+ text-align: left;
+ background: transparent;
+ border: none;
+ color: inherit;
+ min-height: 0;
+}
+.typeRow:hover { background: var(--color-bg-muted); }
+.typeSample { flex: 1; min-width: 0; margin: 0; }
+.typeSpec { font-size: var(--font-size-xs); color: var(--color-text-muted); margin: 0; }
+.typeCls { font-size: var(--font-size-xs); color: var(--color-text-muted); font-family: var(--font-family-mono); margin: 0; }
+.spacingRows { display: grid; gap: var(--space-2); }
+.spacingRow {
+ display: flex;
+ align-items: center;
+ gap: var(--space-3);
+ padding: var(--space-1);
+ border-radius: var(--radius-sm);
+ cursor: pointer;
+ text-align: left;
+ background: transparent;
+ border: none;
+ color: inherit;
+ min-height: 0;
+}
+.spacingRow:hover { background: var(--color-bg-muted); }
+.spacingBar { height: 0.75rem; border-radius: var(--radius-sm); background: var(--color-brand-500); }
+.spacingLabel { font-size: var(--font-size-xs); color: var(--color-text-muted); width: 4rem; margin: 0; }
+.spacingVal { font-size: var(--font-size-xs); color: var(--color-text-muted); margin: 0; }
+.spacingCls { font-size: var(--font-size-xs); color: var(--color-text-muted); font-family: var(--font-family-mono); margin-left: auto; margin: 0; }
+.radiusRow { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+.radiusItem { display: grid; gap: var(--space-1); text-align: center; }
+.radiusBox { width: 3rem; height: 3rem; background: color-mix(in srgb, var(--color-brand-500) 15%, transparent); border:	1px solid color-mix(in srgb, var(--color-brand-500) 40%, transparent); }
+.radiusLabel { font-size: var(--font-size-xs); color: var(--color-text-muted); margin: 0; }
+.elevRow { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr))); gap: var(--space-2); }
+.elevCard {
+ display: grid;
+ gap: var(--space-1);
+ text-align: left;
+ border: 1px solid var(--color-border);
+ border-radius: var(--radius-md);
+ background: var(--color-bg-elevated);
+ padding: var(--space-3);
+ cursor: pointer;
+ min-height: 0;
+}
+.elevCard:hover { border-color: var(--color-brand-500); }
+.elev-1 { box-shadow: var(--shadow-1); }
+.elev-2 { box-shadow: var(--shadow-2); }
+.elev-3 { box-shadow: var(--shadow-3); }
+.elev-4 { box-shadow: var(--shadow-4); }
+.elev-glow { box-shadow: var(--shadow-glow); }
+.elevName { font-weight: 600; margin: 0; }
+.elevUse { font-size: var(--font-size-sm); color: var(--color-text-muted); margin: 0; }
+.elevVar { font-size: var(--font-size-xs); color: var(--color-text-muted); font-family: var(--font-family-mono); margin: 0; }
+.motionRow { display: grid; gap: var(--space-2); }
+.motionBox {
+ display: flex;
+ align-items: center;
+ gap: var(--space-2);
+ border: 1px solid var(--color-border);
+ border-radius: var(--radius-md);
+ background: var(--color-bg-elevated);
+ padding: var(--space-3);
+}
+.motionChip { width: 3rem; height: 0.5rem; border-radius: var(--radius-full); background: var(--color-brand-500); }
+.motionChipFast { animation: v3-pulse 0.6s ease-in-out infinite alternate; }
+.motionChipNormal { animation: v3-pulse 1.2s ease-in-out infinite alternate; }
+@keyframes v3-pulse { from { opacity: 0.35; transform: scaleX(0.85); } to { opacity: 1; transform: scaleX(1); } }
+.iconGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 5rem), 1fr))); gap: var(--space-2); }
+.iconCell {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: var(--space-1);
+ border: 1px solid var(--color-border);
+ border-radius: var(--radius-md);
+ background: var(--color-bg-elevated);
+ padding: var(--space-2);
+}
+.iconCell svg { width: 1.25rem; height: 1.25rem; color: var(--color-brand-500); }
+.iconName { font-size: var(--font-size-xs); color: var(--color-text-muted); margin: 0; }
+.demoCard { border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg-elevated); padding: var(--space-3); display: grid; gap: var(--space-3); }
+.pills { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.pillGroup { display: grid; gap: var(--space-2); }
+.pillLabel { font-size: var(--font-size-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin: 0; }
+.organismBox { border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden; background: var(--color-bg); }
+.patternList { display: grid; gap: var(--space-2); }
+.ruleList { display: grid; gap: var(--space-2); }
+.rule {
+ display: flex;
+ gap: var(--space-2);
+ border: 1px solid var(--color-border);
+ border-radius: var(--radius-md);
+ background: var(--color-bg-elevated);
+ padding: var(--space-3);
+}
+.ruleIcon { width: 1rem; height: 1rem; color: var(--color-success-600); flex-shrink: 0; margin-top: 0.125rem; }
+.ruleCopy { display: grid; gap: var(--space-1); }
+.ruleTitle { font-weight: 600; margin: 0; }
+.ruleText { font-size: var(--font-size-sm); color: var(--color-text-muted); margin: 0; }
+.copyHint { font-size: var(--font-size-xs); color: var(--color-text-muted); margin: 0; }
+.copied { animation: v3-flash 0.8s ease-out; }
+@keyframes v3-flash { 0% { background-color: color-mix(in srgb, var(--color-success-600) 20%, transparent); } 100% { background-color: transparent; } }
+.copyable {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  min-height: 0;
+}
+.copyable:hover { border-color: var(--color-border); background: var(--color-bg-muted); }
+.copyCheck { width:  1rem; height:  1rem; color: var(--color-success-600); }

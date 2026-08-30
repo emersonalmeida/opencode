@@ -1,0 +1,163 @@
+import type { AuditSource } from "../auditModel";
+
+/**
+ * Auditoria maximalista — REDDIT.
+ *
+ * Base: docs/fontes/reddit-2026-08-25.md, server/routes/uniReddit.ts,
+ * notebooks reddit-fonte/reddit-output e a documentação pública da API
+ * JSON do Reddit (listings, search, comments).
+ */
+export const REDDIT_AUDIT: AuditSource = {
+  id: "reddit",
+  order: 5,
+  name: "Reddit",
+  category: "Social",
+  status: "audited",
+  implemented: true,
+  sourceId: "reddit",
+  summary:
+    "A maior rede de comunidades temáticas — voz do usuário não filtrada: discussões, reclamações, recomendações e comparações sobre apps. O sistema usa a API pública JSON (.json nas URLs, raw_json=1): busca global ou por subreddit com 4 sorts, e comentários sob demanda por post. Em datacenters o Reddit responde 403 por IP (verificado ao vivo) — o erro é honesto e o comportamento varia por IP.",
+  endpoints: [
+    {
+      label: "Busca de posts (JSON)",
+      url: "https://www.reddit.com/search.json?q={q}&sort={sort}&limit={n}&restrict_sr={0|1}&raw_json=1",
+      method: "GET",
+      auth: "nenhuma",
+      notes: "Global ou restrita a um sub (r/<sub>/search.json + restrict_sr=1).",
+      status: "implemented",
+    },
+    {
+      label: "Comentários de um post",
+      url: "https://www.reddit.com/r/{sub}/comments/{postId}.json?limit={n}&depth=1&sort=top",
+      method: "GET",
+      auth: "nenhuma",
+      notes: "Retorna array [post, comentários]; depth=1 = top-level.",
+      status: "implemented",
+    },
+    {
+      label: "Listings de subreddit (sem busca)",
+      url: "https://www.reddit.com/r/{sub}/{hot|new|top|rising|controversial}.json?t={janela}",
+      method: "GET",
+      auth: "nenhuma",
+      notes: "Hot/top/rising/controversial de um sub inteiro — não implementado.",
+      status: "available",
+    },
+    {
+      label: "Listings globais",
+      url: "https://www.reddit.com/{hot|new|top}.json · /r/all · /r/popular",
+      method: "GET",
+      auth: "nenhuma",
+      notes: "Front page e agregadores.",
+      status: "available",
+    },
+    {
+      label: "About de subreddit/user",
+      url: "https://www.reddit.com/r/{sub}/about.json · /user/{u}/about.json",
+      method: "GET",
+      auth: "nenhuma",
+      notes: "Inscritos, descrição, regras do sub; karma do usuário.",
+      status: "available",
+    },
+    {
+      label: "Paginação (after/before)",
+      url: "…&after={fullname}",
+      method: "GET",
+      auth: "nenhuma",
+      notes: "Listings paginam por fullname (t3_…) — o sistema não pagina hoje.",
+      status: "available",
+    },
+    {
+      label: "OAuth API (api.reddit.com / oauth)",
+      url: "https://oauth.reddit.com/…",
+      method: "GET",
+      auth: "client_id + secret (script app)",
+      notes: "Rate-limit estável 100 req/min com token; sem token o .json público é por IP.",
+      status: "available",
+    },
+  ],
+  parameters: [
+    { name: "query", type: "string", description: "Termo de busca (posts).", status: "implemented" },
+    { name: "subreddit", type: "string", description: "'all' (default) ou nome do sub — com restrict_sr=1 limita a busca.", default: "all", status: "implemented" },
+    { name: "sort", type: "enum", description: "Ordenação da busca/listing.", options: ["hot", "new", "top", "relevance", "comments"], default: "top", status: "implemented" },
+    { name: "t (janela do top/controversial)", type: "enum", description: "Janela temporal dos sorts top/controversial.", options: ["hour", "day", "week", "month", "year", "all"], default: "all", status: "available" },
+    { name: "limit", type: "number", description: "Máximo por chamada (API aceita até 100).", range: "1–100", default: "10", status: "implemented" },
+    { name: "after/before", type: "fullname", description: "Cursor de paginação de listings (t3_/t1_…).", status: "available" },
+    { name: "depth (comments)", type: "number", description: "Profundidade da árvore de comentários (hoje depth=1).", range: "1–8", default: "1", status: "partial" },
+    { name: "sort (comments)", type: "enum", description: "Ordem dos comentários (top hoje; confidence/best/new/old/controversial disponíveis).", options: ["top", "confidence", "new", "old", "controversial", "qa"], default: "top", status: "partial" },
+    { name: "syntax", type: "enum", description: "Sintaxe da busca: plain, cloudsearch ou lucene (operadores AND/OR/field:).", options: ["plain", "cloudsearch", "lucene"], status: "available" },
+    { name: "postId", type: "string", description: "Post alvo dos comentários.", status: "implemented" },
+  ],
+  capabilities: [
+    { label: "Busca global ou por subreddit com 4 sorts", status: "implemented" },
+    { label: "Comentários top-level sob demanda por post", status: "implemented" },
+    { label: "Metadados de engajamento (upvotes, upvoteRatio, numComments)", status: "implemented" },
+    { label: "Janela temporal t= no sort top (dia/semana/mês/ano)", status: "available" },
+    { label: "Listings de subreddit sem busca (hot/new/top/rising/controversial)", status: "available" },
+    { label: "Usuários: perfil/submissões/comentários (usuário teto)", status: "implemented" },
+    { label: "Metadados de subreddit: rules, wiki, popular/new (estrutura)", status: "implemented" },
+    { label: "Thread completa (depth > 1, replies aninhadas)", status: "available" },
+    { label: "About de subreddit (inscritos, regras) — descoberta de comunidades", status: "available" },
+    { label: "Paginação after/before (cobertura além de 100)", status: "available" },
+    { label: "OAuth com rate-limit estável (100 req/min)", status: "available" },
+    { label: "Sort de comentários por controversial (mineração de conflito)", status: "available" },
+  ],
+  combinations: [
+    "query × subreddit × sort — do achado global à discussão da comunidade certa",
+    "top × t=week/month — o melhor do período vs o histórico",
+    "posts × comentários — do tema à argumentação profunda",
+    "Reddit × reviews de loja — cruzamento de dores (Pipeline Multifonte)",
+    "busca lucene (field:) × subs — consultas estruturadas (title:, selftext:, flair:)",
+  ],
+  outputs: [
+    { name: "title", type: "string", description: "Título do post.", presence: "always", status: "implemented" },
+    { name: "selftext", type: "string", description: "Corpo do post (vazio em posts de link — normal).", presence: "common", status: "implemented" },
+    { name: "url / permalink", type: "string", description: "Link externo e link do post.", presence: "always", status: "implemented" },
+    { name: "author", type: "string", description: "Autor do post/comentário ([deleted] possível).", presence: "common", status: "implemented" },
+    { name: "created_utc → date", type: "timestamp", description: "Data exata (epoch → ISO).", presence: "always", status: "implemented" },
+    { name: "score (upvotes)", type: "number", description: "Saldo de votos.", presence: "always", status: "implemented" },
+    { name: "upvoteRatio", type: "number", description: "% de upvotes — termômetro de controvérsia.", presence: "always", status: "implemented" },
+    { name: "numComments", type: "number", description: "Nº de comentários do post.", presence: "always", status: "implemented" },
+    { name: "subreddit", type: "string", description: "Comunidade de origem.", presence: "always", status: "implemented" },
+    { name: "flair (link_flair_text)", type: "string", description: "Flair/categoria editorial do post.", presence: "common", status: "available" },
+    { name: "awards (total_awards_received)", type: "number", description: "Prêmios recebidos.", presence: "common", status: "available" },
+    { name: "is_video / media / preview", type: "misto", description: "Mídia embutida (vídeo, galeria, imagens com variants).", presence: "common", status: "available" },
+    { name: "comment: body/score/author/created", type: "objeto", description: "Comentário top-level com votos e data.", presence: "always", status: "implemented" },
+    { name: "comment: replies (árvore)", type: "objeto", description: "Respostas aninhadas — requer depth > 1.", presence: "always", status: "available" },
+    { name: "distinguished / stickied / locked", type: "flags", description: "Flags de moderação (mod, fixado, trancado).", presence: "common", status: "available" },
+  ],
+  derivations: [
+    "Termômetro de controvérsia (upvoteRatio baixo + muitos comentários)",
+    "Mapa de comunidades relevantes (subs recorrentes por tema)",
+    "Ranking de dores por frequência em comentários",
+    "Detecção de crises (threads de reclamação em alta)",
+    "Influenciadores orgânicos (autores recorrentes com score alto)",
+  ],
+  limits: [
+    "403 por IP em datacenters (verificado ao vivo 2026-08-23) — comportamento varia por IP",
+    "API pública .json: rate-limit por IP sem contrato; OAuth estabiliza em 100 req/min",
+    "limit máximo 100 por chamada; cobertura maior exige paginação after/before",
+    "Comentários hoje top-level apenas (depth=1), sob demanda por post",
+  ],
+  reliability: {
+    consistency:
+      "Scores e contagens mudam com o tempo (natureza social); estrutura do post é estável. Em IP de datacenter a fonte pode simplesmente não responder (403).",
+    stability:
+      "API JSON pública é estável há anos, mas o Reddit tem restringido acessos sem auth — o erro 403 honesto já está mapeado.",
+    risks: [
+      "Bloqueio 403 por IP/datacenter",
+      "Restrições crescentes da API pública sem OAuth",
+      "Posts/comentários deletados aparecem como [deleted]/[removed]",
+    ],
+    fallbacks: [
+      "Erro honesto com a razão (não descarrilamento)",
+      "OAuth script app (client_id/secret) como caminho estável",
+      "Outras fontes sociais (Mastodon/Bluesky/HN) cobrem parte do sinal",
+    ],
+  },
+  references: [
+    { label: "Doc da fonte no sistema", url: "docs/fontes/reddit-2026-08-25.md" },
+    { label: "Notebook de testes (reddit-fonte)", url: "docs/fontes/notebooks/reddit-fonte.md" },
+    { label: "Saídas de exemplo (reddit-output)", url: "docs/fontes/notebooks/reddit-output.md" },
+    { label: "Reddit API (documentação)", url: "https://www.reddit.com/dev/api/" },
+  ],
+};

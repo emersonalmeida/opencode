@@ -1,0 +1,9 @@
+
+.stat {
+  display: grid;
+  gap: var(--space-1);
+}
+.stat [data-tone="success"] { color: var(--color-success-600); }
+.stat [data-tone="warning"] { color: var(--color-warning-600); }
+.stat [data-tone="danger"] { color: var(--color-danger-600); }
+.stat [data-tone="info"] { color: var(--color-info-600); }

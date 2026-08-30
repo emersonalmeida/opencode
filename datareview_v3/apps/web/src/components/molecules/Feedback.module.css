@@ -1,0 +1,73 @@
+.liveStatus {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+.busy {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  animation: v3-spin 0.8s linear infinite;
+}
+@keyframes v3-spin {
+  to { transform: rotate(1turn); }
+}
+.errorBox {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  border: 1px solid color-mix(in srgb, var(--color-danger-600) 40%, transparent);
+  background: color-mix(in srgb, var(--color-danger-600) 10%, transparent);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+}
+.errorIcon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-danger-600);
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+.errorCopy {
+  display: grid;
+  gap: var(--space-1);
+  flex:  1;
+  min-width: 0;
+}
+.errorMessage {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-danger-600);
+  margin: 0;
+}
+.errorHint {
+  font-size: var(--font-size-xs);
+  color: color-mix(in srgb, var(--color-danger-600) 80%, transparent);
+  margin: 0;
+}
+.retry {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-danger-600);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1);
+}
+.retry:hover {
+  text-decoration: underline;
+}
+.retryIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
