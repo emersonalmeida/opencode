@@ -27,6 +27,12 @@ test("rota desconhecida cai no NotFound", () => {
   assert.match(html, /Página não encontrada/);
 });
 
+test("/fontes renderiza o formulário de teste de fontes", () => {
+  const html = render(["/fontes"]);
+  assert.match(html, /Testes de fontes/);
+  assert.match(html, /Coletar/);
+});
+
 test("helpers puros de formatação", () => {
   assert.equal(formatCount(999), "999");
   assert.equal(formatCount(1500), "1.5k");

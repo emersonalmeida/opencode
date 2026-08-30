@@ -47,6 +47,7 @@ export interface CatalogSource extends NormalizedItem {
   data: string[];
   keys: string[];
   aliases: string[];
+  tosNote?: string;
 }
 
 export interface CatalogResponse {
