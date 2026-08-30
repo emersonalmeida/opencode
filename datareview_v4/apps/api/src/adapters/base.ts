@@ -27,10 +27,14 @@ export interface DefineOptions {
 /**
  * Adaptador genérico: fetch + map + try/catch. A fonte NUNCA lança — falhas
  * viram `response.error` (parcial-OK), a mesma convenção do v1 e do núcleo.
+ * `fetch`/`map` ficam expostos no objeto (úteis p/ testes herméticos sem rede).
  */
-export function defineAdapter(meta: AdapterMeta, impl: DefineOptions): SourcePort {
+export type InspectableAdapter = SourcePort & { fetch: FetchStep; map: MapStep };
+
+export function defineAdapter(meta: AdapterMeta, impl: DefineOptions): InspectableAdapter {
   return {
     ...meta,
+    ...impl,
     async collect(options: CollectOptions): Promise<CollectResponse> {
       const response: CollectResponse = { source: meta.id, query: options.query, items: [] };
       try {

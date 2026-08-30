@@ -12,6 +12,9 @@ import type { ApiKeys } from "../keys.js";
 import {
   arxiv, gdelt, github, hackernews, reddit, semanticscholar, stackexchange, wikipedia,
 } from "./jsonSources.js";
+import {
+  bluesky, deezer, googlenews, mastodon, openalex, steam, wikidata,
+} from "./moreSources.js";
 import { SuggestSource } from "./suggest.js";
 
 export type AdapterFactory = (keys: ApiKeys) => SourcePort;
@@ -29,6 +32,13 @@ export const ADAPTERS: Record<string, AdapterFactory> = {
   semanticscholar: () => semanticscholar,
   wikipedia: () => wikipedia,
   reddit: () => reddit,
+  bluesky: () => bluesky,
+  deezer: () => deezer,
+  steam: () => steam,
+  googlenews: () => googlenews,
+  wikidata: () => wikidata,
+  openalex: () => openalex,
+  mastodon: () => mastodon,
 };
 
 export interface BuiltAdapter {

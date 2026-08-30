@@ -74,9 +74,9 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 > **ToS/restrição:** Backoff exponencial em 429 (5 tentativas, timeout 30s).
 
-| **steam** | Steam | scrape | none | media | query, action, appId, language, limit | name, price, appid, reviewSummary, reviews | https://store.steampowered.com/search/?term= + /appreviews/{appId}?json=1 | — | PONTE(v1) |
+| **steam** | Steam | api | none | media | query, action, appId, language, limit | name, price, appid, reviewSummary, reviews | https://store.steampowered.com/api/storesearch/?term= (busca real portada; reviews ainda em ponte) | — | PRONTO |
 
-> **ToS/restrição:** 2 acoes (search/reviews); language all/portuguese/english.
+> **ToS/restrição:** 2 acoes (search/reviews); language all/portuguese/english; pais via country (cc).
 
 | **reclameaqui** | ReclameAqui | api | none | reviews | query, action, company, limit | company, complaint, status, date, title, text | https://iosearch.reclameaqui.com.br/raichu-io-site-search-v1/... | — | PONTE(v1) |
 
@@ -103,13 +103,21 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 | **lobsters** | Lobsters | api | none | news, social | query, limit | title, url, author, score, comments_count | https://lobste.rs/search.json | — | PONTE(v1) |
 
-| **mastodon** | Mastodon | api | none | social | query, hashtag, limit | id, content, author, favourites, reblogs, created, url | https://mastodon.social/api/v1/timelines/tag/{tag} ou /api/v2/search | — | PONTE(v1) |
+| **mastodon** | Mastodon | api | none | social | query, hashtag, limit | id, content, author, favourites, reblogs, created, url | https://mastodon.social/api/v1/timelines/tag/{tag} (busca real portada; /api/v2/search precisa de token) | — | PRONTO |
 
-| **bluesky** | Bluesky | api | none | social | query, limit | uri, text, author, likes, reposts, created, url | https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts | — | PONTE(v1) |
+> **ToS/restrição:** Hashtag pública sem auth; query '#termo' ou termo direto.
 
-| **wikidata** | Wikidata | api | none | custom | query, limit | entityId, label, description, claims, url | https://www.wikidata.org/w/api.php (wbsearchentities) | — | PONTE(v1) |
+| **bluesky** | Bluesky | api | none | social | query, limit | uri, text, author, likes, reposts, created, url | https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts | — | PRONTO |
 
-| **openalex** | OpenAlex | api | none | academic | query, limit | id, title, doi, authors, year, cited_by_count, open_access | https://api.openalex.org/works | — | PONTE(v1) |
+> **ToS/restrição:** Em datacenters pode responder 403 por IP (verificado ao vivo); comportamento honesto.
+
+| **wikidata** | Wikidata | api | none | custom | query, limit | entityId, label, description, claims, url | https://www.wikidata.org/w/api.php (wbsearchentities) | — | PRONTO |
+
+> **ToS/restrição:** Busca pública sem chave; entidades com rótulo/descrição/id.
+
+| **openalex** | OpenAlex | api | none | academic | query, limit | id, title, doi, authors, year, cited_by_count, open_access | https://api.openalex.org/works | — | PRONTO |
+
+> **ToS/restrição:** Busca pública sem chave; papers com doi, autores, citações.
 
 | **crossref** | Crossref | api | none | academic | query, limit | doi, title, authors, year, journal, citation_count | https://api.crossref.org/works | — | PONTE(v1) |
 
@@ -142,9 +150,9 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 | **onthisday** | Wikipedia on this day | api | none | custom | lang, type, limit | type, text, year, pages | https://api.wikimedia.org/feed/v1/wikipedia/{lang}/onthisday/{type}/{mm}/{dd} | — | PONTE(v1) |
 
-| **googlenews** | Google News RSS | feed | none | news | query, hl, gl, limit | title, source, published, url | https://news.google.com/rss/search?q=&hl=&gl= | — | PONTE(v1) |
+| **googlenews** | Google News RSS | feed | none | news | query, hl, gl, limit | title, source, published, url | https://news.google.com/rss/search?q=&hl=&gl= | — | PRONTO |
 
-> **ToS/restrição:** Parse RSS/XML, limit 50.
+> **ToS/restrição:** Parse RSS/XML, limit 50; locale fixa pt-BR por ora.
 
 | **podcasts** | Apple Podcasts (charts) | feed | none | media | country, limit | title, artist, feed, artwork, rank | https://itunes.apple.com/{cc}/rss/toppodcasts/limit= | — | PONTE(v1) |
 
@@ -164,7 +172,9 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 | **ibge-nomes** | IBGE (ranking de nomes) | api | none | custom | limit | nome, frequencia, rank | https://servicodados.ibge.gov.br/api/v2/censos/nomes/ranking | — | PONTE(v1) |
 
-| **deezer** | Deezer (charts) | api | none | media | query, limit | id, title, artist, album, duration, rank, url | https://api.deezer.com/chart/0/tracks + /search | — | PONTE(v1) |
+| **deezer** | Deezer (charts) | api | none | media | query, limit | id, title, artist, album, duration, rank, url | https://api.deezer.com/search (busca real portada; chart ainda em ponte) | — | PRONTO |
+
+> **ToS/restrição:** Busca pública sem chave; dados de faixa/artista/álbum.
 
 | **openlibrary-trending** | Open Library (em alta) | api | none | trends, custom | period, limit | title, author, year, score, url | https://openlibrary.org/trending/{daily\|weekly\|monthly}.json | — | PONTE(v1) |
 
