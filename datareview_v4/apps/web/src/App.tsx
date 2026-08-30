@@ -1,12 +1,11 @@
-import { Navigate, Route, Routes } from "react-router";
+import { Route, Routes } from "react-router";
 import { Shell } from "./layouts/Shell";
 import { Home } from "./pages/Home";
 import { Fontes } from "./pages/Fontes";
 import { Auditoria } from "./pages/Auditoria";
+import { Dataset } from "./pages/Dataset";
 import { NotFound } from "./pages/NotFound";
 
-/** Rotas do front enxuto (design da v1, sem o excesso das ~63 páginas do legado).
- *  Dataset chega no próximo commit incremental. */
 export function AppRoutes() {
   return (
     <Routes>
@@ -14,7 +13,7 @@ export function AppRoutes() {
         <Route index element={<Home />} />
         <Route path="fontes" element={<Fontes />} />
         <Route path="auditoria" element={<Auditoria />} />
-        <Route path="dataset" element={<Navigate to="/" replace />} />
+        <Route path="dataset" element={<Dataset />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

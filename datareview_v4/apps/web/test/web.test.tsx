@@ -39,6 +39,12 @@ test("/auditoria renderiza o resumo do registry", () => {
   assert.match(html, /Registry declarativo/);
 });
 
+test("/dataset renderiza a página do dataset", () => {
+  const html = render(["/dataset"]);
+  assert.match(html, /Dataset/);
+  assert.match(html, /Itens coletados/);
+});
+
 test("helpers puros de formatação", () => {
   assert.equal(formatCount(999), "999");
   assert.equal(formatCount(1500), "1.5k");

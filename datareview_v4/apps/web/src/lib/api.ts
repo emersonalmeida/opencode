@@ -107,6 +107,11 @@ export interface AuditResponse {
   categories: Record<string, number>;
 }
 
+export interface DeriveResponse {
+  stats: Stats;
+  hint: string;
+}
+
 export function getHealth(): Promise<Health> {
   return request("/health");
 }
@@ -129,4 +134,8 @@ export function getStats(): Promise<Stats> {
 
 export function getAudit(): Promise<AuditResponse> {
   return request("/audit");
+}
+
+export function getDerive(): Promise<DeriveResponse> {
+  return request("/derive");
 }
