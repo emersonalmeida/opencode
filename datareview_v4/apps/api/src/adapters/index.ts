@@ -19,6 +19,7 @@ import { SuggestSource } from "./suggest.js";
 import { INFRA_ADAPTERS } from "./infraSources.js";
 import { codeSources } from "./codeSources.js";
 import { mediaSources } from "./mediaSources.js";
+import { dataSources } from "./dataSources.js";
 
 export type AdapterFactory = (keys: ApiKeys) => SourcePort;
 
@@ -49,6 +50,7 @@ export const ADAPTERS: Record<string, AdapterFactory> = {
   ...INFRA_ADAPTERS,
   ...codeSources,
   ...mediaSources,
+  ...dataSources,
 };
 
 export interface BuiltAdapter {

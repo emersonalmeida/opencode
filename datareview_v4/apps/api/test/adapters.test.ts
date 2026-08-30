@@ -10,6 +10,10 @@ import { buildAdapter } from "../src/adapters/index.js";
 import { custom, embedSearch, feed, itunesProxy, paste } from "../src/adapters/infraSources.js";
 import { cratesio, doaj, npmDownloads, pypi, rubygems } from "../src/adapters/codeSources.js";
 import { archive, itchio, openfoodfacts, podcasts, producthunt, tvmaze } from "../src/adapters/mediaSources.js";
+import {
+  brasilapiFeriados, brasilapiTaxas, crypto, frankfurter, githubTrending, ibgeNomes, mastodonTrends,
+  onthisday, openlibraryTrending, steamtop, trending, weather, wikitop, wikiviews,
+} from "../src/adapters/dataSources.js";
 
 const opts: CollectOptions = { query: "typescript" };
 
@@ -518,6 +522,154 @@ test("itchio: HTML sem jogos → erro honesto (map)", () => {
 
 test("registry: lote 6 registrado (archive, tvmaze, openfoodfacts, podcasts, producthunt, itchio)", () => {
   for (const id of ["archive", "tvmaze", "openfoodfacts", "podcasts", "producthunt", "itchio"]) {
+    const built = buildAdapter(id, {});
+    assert.ok(built.source, `${id} deve ter adaptador real`);
+    assert.equal(built.source!.id, id);
+  }
+});
+
+test("wikitop: normaliza ranking de views", () => {
+  const first = one(mapItems(wikitop, {
+    items: [{ project: "pt.wikipedia", year: "2026", month: "08", day: "29", articles: [{ article: "Ayrton_Senna", views: 5000, rank: 1 }] }],
+  }));
+  assert.equal(first.source, "wikitop");
+  assert.equal(first.score, 5000);
+  assert.match(first.title!, /Ayrton Senna/);
+  assert.ok(first.url!.includes("pt.wikipedia.org/wiki/Ayrton_Senna"));
+});
+
+test("wikiviews: agrega views diárias (Action API prop=pageviews)", () => {
+  const first = one(mapItems(wikiviews, {
+    query: { pages: { 123: { pageid: 123, ns: 0, title: "TypeScript", pageviews: { "20260828": 100, "20260829": 40 } } } },
+  }));
+  assert.equal(first.source, "wikiviews");
+  assert.equal(first.kind, "metric");
+  assert.equal(first.score, 140);
+  assert.match(first.title!, /140/);
+});
+
+test("onthisday: normaliza eventos escolhidos", () => {
+  const items = mapItems(onthisday, {
+    selected: [
+      { text: "Nasceu Ada Lovelace", year: 1815, pages: [{ content_urls: { desktop: { page: "https://pt.wikipedia.org/wiki/Ada_Lovelace" } } }] },
+    ],
+  });
+  const first = one(items);
+  assert.equal(first.source, "onthisday");
+  assert.equal(first.kind, "event");
+  assert.equal(first.date, "1815");
+  assert.match(first.title!, /Ada Lovelace/);
+});
+
+test("crypto: normaliza trending da CoinGecko", () => {
+  const first = one(mapItems(crypto, {
+    coins: [
+      { item: { id: "bitcoin", name: "Bitcoin", symbol: "btc", market_cap_rank: 1, data: { price: { usd: 60000 }, price_change_percentage_24h: { usd: 1.5 } } } },
+    ],
+  }));
+  assert.equal(first.source, "crypto");
+  assert.equal(first.kind, "crypto");
+  assert.equal(first.title, "Bitcoin (btc)");
+  assert.equal(first.score, 1);
+});
+
+test("steamtop: normaliza top da SteamSpy", () => {
+  const first = one(mapItems(steamtop, {
+    "10": { appid: 10, name: "Counter-Strike", positive: 900000, negative: 5000, owners: "10M..15M", players_2weeks: 400000, price: 0 },
+  }));
+  assert.equal(first.source, "steamtop");
+  assert.equal(first.kind, "game");
+  assert.match(first.title!, /Counter-Strike/);
+  assert.match(first.text!, /grátis/);
+});
+
+test("weather: normaliza clima por cidade", () => {
+  const first = one(mapItems(weather, [
+    { city: "São Paulo", temperature_2m: 24.3, relative_humidity_2m: 62, precipitation: 0, wind_speed_10m: 8, weather_code: 1, units: { relative_humidity_2m: "%", precipitation: "mm", wind_speed_10m: "km/h" } },
+  ]));
+  assert.equal(first.source, "weather");
+  assert.equal(first.kind, "metric");
+  assert.match(first.title!, /São Paulo/);
+});
+
+test("brasilapi-feriados: normaliza lista anual", () => {
+  const first = one(mapItems(brasilapiFeriados, [{ date: "2026-01-01", name: "Confraternização Universal", type: "national" }]));
+  assert.equal(first.source, "brasilapi-feriados");
+  assert.equal(first.kind, "event");
+  assert.equal(first.date, "2026-01-01");
+});
+
+test("brasilapi-taxas: normaliza taxas do BC", () => {
+  const first = one(mapItems(brasilapiTaxas, [{ nome: "Taxa Selic", valor: 10.75, data: "2026-08-29" }]));
+  assert.equal(first.source, "brasilapi-taxas");
+  assert.equal(first.kind, "metric");
+  assert.equal(first.score, 10.75);
+  assert.match(first.text!, /10\.75/);
+});
+
+test("frankfurter: normaliza câmbio (engine = base, query = símbolos)", () => {
+  const items = mapItems(frankfurter, { base: "USD", date: "2026-08-29", rates: { BRL: 5.4, EUR: 0.9 } });
+  assert.equal(items.length, 2);
+  const brl = one(items);
+  assert.match(brl.title!, /1 USD = 5,4 BRL/);
+  assert.equal((brl.meta as Record<string, unknown>).symbol, "BRL");
+});
+
+test("ibge-nomes: ranking do censo (entry.res)", () => {
+  const first = one(mapItems(ibgeNomes, [{ localidade: "BR", res: [{ nome: "MARIA", frequencia: 11734129, ranking: 1 }, { nome: "JOSE", frequencia: 5754529, ranking: 2 }] }]));
+  assert.equal(first.source, "ibge-nomes");
+  assert.equal(first.kind, "person");
+  assert.equal(first.title, "MARIA");
+  assert.equal(first.score, 11734129);
+});
+
+test("ibge-nomes: nome exato devolve série por período", () => {
+  const first = one(mapItems(ibgeNomes, [{ nome: "GABRIELA", res: [{ periodo: "1930[", frequencia: 457 }, { periodo: "[1930,1940[", frequencia: 668 }] }]));
+  assert.equal(first.title, "GABRIELA");
+  assert.equal(first.score, 1125);
+});
+
+test("openlibrary-trending: normaliza livros em alta", () => {
+  const first = one(mapItems(openlibraryTrending, {
+    works: [{ key: "/works/OL1W", title: "Dom Casmurro", author_name: ["Machado de Assis"], first_publish_year: 1899, ratings_average: 4.2, want_to_read_count: 1200 }],
+  }));
+  assert.equal(first.source, "openlibrary-trending");
+  assert.equal(first.kind, "book");
+  assert.equal(first.author, "Machado de Assis");
+  assert.equal(first.score, 4.2);
+});
+
+test("github-trending: normaliza repos (proxy Search API)", () => {
+  const first = one(mapItems(githubTrending, {
+    items: [{ full_name: "openai/gpt-oss", description: "Modelos abertos", html_url: "https://github.com/openai/gpt-oss", stargazers_count: 42000, forks_count: 2000, language: "Python", pushed_at: "2026-08-29T00:00:00Z" }],
+  }));
+  assert.equal(first.source, "github-trending");
+  assert.equal(first.kind, "repo");
+  assert.equal(first.score, 42000);
+  assert.equal(first.title, "openai/gpt-oss");
+});
+
+test("mastodon-trends: normaliza tags em alta", () => {
+  const first = one(mapItems(mastodonTrends, [
+    { name: "typescript", url: "https://mastodon.social/tags/typescript", uses: 123, accounts: 30 },
+  ]));
+  assert.equal(first.source, "mastodon-trends");
+  assert.equal(first.kind, "trend-point");
+  assert.match(first.title!, /#typescript/);
+  assert.equal(first.score, 123);
+});
+
+test("trending: normaliza o RSS do Google Trends em alta", () => {
+  const xml = `<rss><channel><item><title>Nubank</title><link>https://trends.google.com/trends/trending/1</link><pubDate>Sat, 30 Aug 2026 10:00:00 GMT</pubDate></item></channel></rss>`;
+  const first = one(mapItems(trending, xml));
+  assert.equal(first.source, "trending");
+  assert.equal(first.kind, "trend-point");
+  assert.equal(first.title, "Nubank");
+  assert.equal((first.meta as Record<string, unknown>).rank, 1);
+});
+
+test("registry: lote 7 registrado (14 fontes de dados)", () => {
+  for (const id of ["wikitop", "wikiviews", "onthisday", "crypto", "steamtop", "weather", "brasilapi-feriados", "brasilapi-taxas", "frankfurter", "ibge-nomes", "openlibrary-trending", "github-trending", "mastodon-trends", "trending"]) {
     const built = buildAdapter(id, {});
     assert.ok(built.source, `${id} deve ter adaptador real`);
     assert.equal(built.source!.id, id);

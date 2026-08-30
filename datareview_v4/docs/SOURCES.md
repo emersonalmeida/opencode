@@ -34,7 +34,7 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 > **ToS/restrição:** 3 visoes (timeseries/geo/related); mesma tecnica do pytrends; cookie CONSENT.
 
-| **trending** | Google Trends Em alta | api | none | trends, news | geo, hours, limit | title, traffic, link, news_items, geo, hours | https://trends.google.com/trending/rpc?rpcids=i0OFE (batchexecute) + /trending/rss | — | PONTE(v1) |
+| **trending** | Google Trends Em alta | api | none | trends, news | geo, hours, limit | title, traffic, link, news_items, geo, hours | https://trends.google.com/trending/rpc?rpcids=i0OFE (batchexecute) + /trending/rss | — | PRONTO |
 
 > **ToS/restrição:** Horas 4/24/48/168 (4h~25, 24h~230, 48h~630, 168h~1800 itens). RSS so top-10.
 
@@ -152,11 +152,11 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 | id | label | método | auth | capacidades | parâmetros | dados | recurso | chaves | status |
 |----|-------|--------|------|-------------|------------|-------|---------|--------|--------|
-| **wikitop** | Wikipedia top views | api | none | trends | project, date, limit | title, view_count, rank | https://wikimedia.org/api/rest_v1/metrics/pageviews/top/{project}/all-access/ | — | PONTE(v1) |
+| **wikitop** | Wikipedia top views | api | none | trends | project, date, limit | title, view_count, rank | https://wikimedia.org/api/rest_v1/metrics/pageviews/top/{project}/all-access/ | — | PRONTO |
 
-| **wikiviews** | Wikipedia views por artigo | api | none | trends | project, title, days, limit | title, daily_views, total | https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/... | — | PONTE(v1) |
+| **wikiviews** | Wikipedia views por artigo | api | none | trends | project, title, days, limit | title, daily_views, total | https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/... | — | PRONTO |
 
-| **onthisday** | Wikipedia on this day | api | none | custom | lang, type, limit | type, text, year, pages | https://api.wikimedia.org/feed/v1/wikipedia/{lang}/onthisday/{type}/{mm}/{dd} | — | PONTE(v1) |
+| **onthisday** | Wikipedia on this day | api | none | custom | lang, type, limit | type, text, year, pages | https://api.wikimedia.org/feed/v1/wikipedia/{lang}/onthisday/{type}/{mm}/{dd} | — | PRONTO |
 
 | **googlenews** | Google News RSS | feed | none | news | query, hl, gl, limit | title, source, published, url | https://news.google.com/rss/search?q=&hl=&gl= | — | PRONTO |
 
@@ -164,35 +164,37 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 | **podcasts** | Apple Podcasts (charts) | feed | none | media | country, limit | title, artist, feed, artwork, rank | https://itunes.apple.com/{cc}/rss/toppodcasts/limit= | — | PRONTO |
 
-| **crypto** | CoinGecko (crypto) | api | none | trends | limit | name, symbol, price, rank, change | https://api.coingecko.com/api/v3/search/trending | — | PONTE(v1) |
+| **crypto** | CoinGecko (crypto) | api | none | trends | limit | name, symbol, price, rank, change | https://api.coingecko.com/api/v3/search/trending | — | PRONTO |
 
-| **steamtop** | SteamSpy (top jogos) | api | none | media, trends | request, limit | name, appid, owners, players, price, score | https://steamspy.com/api.php?request=top100in2weeks | — | PONTE(v1) |
+| **steamtop** | SteamSpy (top jogos) | api | none | media, trends | request, limit | name, appid, owners, players, price, score | https://steamspy.com/api.php?request=top100in2weeks | — | PRONTO |
 
 > **ToS/restrição:** Rate-limit 1 req/s.
 
-| **weather** | Open-Meteo (clima) | api | none | custom | cities, limit | city, temperature, humidity, precipitation, wind, weathercode | https://api.open-meteo.com/v1/forecast (lat/lon batch) | — | PONTE(v1) |
+| **weather** | Open-Meteo (clima) | api | none | custom | cities, limit | city, temperature, humidity, precipitation, wind, weathercode | https://api.open-meteo.com/v1/forecast (lat/lon batch) | — | PRONTO |
 
-| **brasilapi-feriados** | Brasil API (feriados) | api | none | custom | year, limit | date, name, type | https://brasilapi.com.br/api/feriados/v1/{year} | — | PONTE(v1) |
+| **brasilapi-feriados** | Brasil API (feriados) | api | none | custom | year, limit | date, name, type | https://brasilapi.com.br/api/feriados/v1/{year} | — | PRONTO |
 
-| **brasilapi-taxas** | Brasil API (taxas) | api | none | custom | limit | nome, valor, data | https://brasilapi.com.br/api/taxas/v1 | — | PONTE(v1) |
+| **brasilapi-taxas** | Brasil API (taxas) | api | none | custom | limit | nome, valor, data | https://brasilapi.com.br/api/taxas/v1 | — | PRONTO |
 
-| **frankfurter** | Frankfurter (câmbio) | api | none | custom | base, symbols, limit | date, base, rates | https://api.frankfurter.dev/v1/latest?base=&symbols= | — | PONTE(v1) |
+| **frankfurter** | Frankfurter (câmbio) | api | none | custom | base, symbols, limit | date, base, rates | https://api.frankfurter.dev/v1/latest?base=&symbols= | — | PRONTO |
 
-| **ibge-nomes** | IBGE (ranking de nomes) | api | none | custom | limit | nome, frequencia, rank | https://servicodados.ibge.gov.br/api/v2/censos/nomes/ranking | — | PONTE(v1) |
+| **ibge-nomes** | IBGE (ranking de nomes) | api | none | custom | limit | nome, frequencia, rank | https://servicodados.ibge.gov.br/api/v2/censos/nomes/ranking | — | PRONTO |
 
 | **deezer** | Deezer (charts) | api | none | media | query, limit | id, title, artist, album, duration, rank, url | https://api.deezer.com/search (busca real portada; chart ainda em ponte) | — | PRONTO |
 
 > **ToS/restrição:** Busca pública sem chave; dados de faixa/artista/álbum.
 
-| **openlibrary-trending** | Open Library (em alta) | api | none | trends, custom | period, limit | title, author, year, score, url | https://openlibrary.org/trending/{daily\|weekly\|monthly}.json | — | PONTE(v1) |
+| **openlibrary-trending** | Open Library (em alta) | api | none | trends, custom | period, limit | title, author, year, score, url | https://openlibrary.org/trending/{daily\|weekly\|monthly}.json | — | PRONTO |
 
 | **npm-downloads** | npm downloads | api | none | code, trends | packages, period, limit | package, downloads, period | https://api.npmjs.org/downloads/point/{last-week}/{pkgs} | — | PRONTO |
 
 > **ToS/restrição:** Ate 20 pacotes por chamada.
 
-| **github-trending** | GitHub trending | scrape | none | code, trends | since, language, limit | name, description, stars, forks, language, url | scraping https://github.com/trending?since=&language= | — | PONTE(v1) |
+| **github-trending** | GitHub trending | scrape | none | code, trends | since, language, limit | name, description, stars, forks, language, url | scraping https://github.com/trending?since=&language= | — | PRONTO |
 
-| **mastodon-trends** | Mastodon trends | api | none | social, trends | instance, kind, limit | content, author, favourites, url, tags, links | https://{instance}/api/v1/trends/statuses\|tags\|links | — | PONTE(v1) |
+> **ToS/restrição:** Proxy via GitHub Search API (created recente + sort=stars); scraping direto bloqueado em datacenter.
+
+| **mastodon-trends** | Mastodon trends | api | none | social, trends | instance, kind, limit | content, author, favourites, url, tags, links | https://{instance}/api/v1/trends/statuses\|tags\|links | — | PRONTO |
 
 > **ToS/restrição:** Instancia padrao mastodon.social.
 
