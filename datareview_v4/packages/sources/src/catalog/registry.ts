@@ -79,8 +79,8 @@ export const SOURCE_CATALOG: SourceCatalogEntry[] = [
     data: ["rank", "title", "link", "snippet"],
     resource: "scraping bing/ddg + API brave/google-cse",
     keys: ["BRAVE_API_KEY", "GOOGLE_API_KEY", "GOOGLE_CX"],
-    status: "bridge",
-    tosNote: "bing/ddg sem chave; Brave e Google CSE exigem chave BYOK. DDG rate-limita datacenter.",
+    status: "implemented",
+    tosNote: "bing/ddg sem chave; Brave e Google CSE exigem chave BYOK (env). DDG rate-limita datacenter; falha de uma engine nao derruba as demais.",
   },
   {
     id: "youtube",

@@ -13,6 +13,8 @@ import { archive, itchio, openfoodfacts, podcasts, producthunt, tvmaze } from ".
 import { lobsters, suggestProvider, web } from "../src/adapters/uni.js";
 import { apple } from "../src/adapters/apple.js";
 import { youtube } from "../src/adapters/youtube.js";
+import { serpFactory } from "../src/adapters/serp.js";
+import type { InspectableAdapter } from "../src/adapters/base.js";
 import {
   brasilapiFeriados, brasilapiTaxas, crypto, frankfurter, githubTrending, ibgeNomes, mastodonTrends,
   onthisday, openlibraryTrending, steamtop, trending, weather, wikitop, wikiviews,
@@ -712,6 +714,48 @@ test("registry: lote 10 registrado (youtube)", () => {
   const built = buildAdapter("youtube", {});
   assert.ok(built.source, "youtube deve ter adaptador real");
   assert.equal(built.source!.id, "youtube");
+});
+
+test("serp: mapa itens de busca com rank/engine", () => {
+  const serp = serpFactory({}) as InspectableAdapter;
+  const first = one(
+    mapItems(serp, {
+      action: "search",
+      query: "typescript",
+      results: [
+        { engine: "duckduckgo", rank: 2, title: "TypeScript docs", link: "https://www.typescriptlang.org/", snippet: "Linguagem tipada." },
+        { engine: "bing", rank: 1, title: "TS", link: "https://www.typescriptlang.org/", snippet: "Outro" },
+      ],
+    }),
+  );
+  assert.equal(first.source, "serp");
+  assert.equal(first.author, "duckduckgo");
+  assert.equal(first.score, 980);
+  assert.equal(mapItems(serp, { action: "search", results: [] }).length, 0);
+});
+
+test("serp: content vira item único (heading + parágrafos)", () => {
+  const serp = serpFactory({}) as InspectableAdapter;
+  const items = mapItems(serp, {
+    action: "content",
+    url: "https://exemplo.com/",
+    content: [
+      { tag: "p", text: "Prefácio." },
+      { tag: "h1", text: "Título da página" },
+      { tag: "p", text: "Parágrafo explicativo." },
+    ],
+  });
+  assert.equal(items.length, 1);
+  const it = one(items);
+  assert.equal(it.kind, "document");
+  assert.equal(it.title, "Título da página");
+  assert.match(it.text ?? "", /Prefácio/);
+});
+
+test("registry: lote 11 registrado (serp)", () => {
+  const built = buildAdapter("serp", {});
+  assert.ok(built.source, "serp deve ter adaptador real");
+  assert.equal(built.source!.id, "serp");
 });
 
 test("ibge-nomes: ranking do censo (entry.res)", () => {

@@ -169,7 +169,7 @@ export const suggestProvider = defineAdapter(
 const MAX_BYTES = 25_000_000;
 const MAX_TEXT_CHARS = 20_000;
 
-function decodeEntities(s: string): string {
+export function decodeEntities(s: string): string {
   return s
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
@@ -180,7 +180,7 @@ function decodeEntities(s: string): string {
     .replace(/&nbsp;/g, " ");
 }
 
-function stripTags(s: string): string {
+export function stripTags(s: string): string {
   return decodeEntities(s.replace(/<[^>]+>/g, "")).replace(/\s+/g, " ").trim();
 }
 

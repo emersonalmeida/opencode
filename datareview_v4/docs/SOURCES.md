@@ -38,9 +38,9 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 > **ToS/restrição:** Horas 4/24/48/168 (4h~25, 24h~230, 48h~630, 168h~1800 itens). RSS so top-10.
 
-| **serp** | SERP multi-engine | scrape | byok | search | query, engine, limit, action | rank, title, link, snippet | scraping bing/ddg + API brave/google-cse | BRAVE_API_KEY, GOOGLE_API_KEY, GOOGLE_CX | PONTE(v1) |
+| **serp** | SERP multi-engine | scrape | byok | search | query, engine, limit, action | rank, title, link, snippet | scraping bing/ddg + API brave/google-cse | BRAVE_API_KEY, GOOGLE_API_KEY, GOOGLE_CX | PRONTO |
 
-> **ToS/restrição:** bing/ddg sem chave; Brave e Google CSE exigem chave BYOK. DDG rate-limita datacenter.
+> **ToS/restrição:** bing/ddg sem chave; Brave e Google CSE exigem chave BYOK (env). DDG rate-limita datacenter; falha de uma engine nao derruba as demais.
 
 | **youtube** | YouTube | scrape | none | media, social | query, action, limit, order, videoId | videoId, title, channel, published, views, duration, link, thumb | scraping ytInitialData (/results) + youtubei/v1/next (comentarios) | YOUTUBE_API_KEY | PRONTO |
 
