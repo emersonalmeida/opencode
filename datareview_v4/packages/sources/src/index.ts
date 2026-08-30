@@ -39,6 +39,7 @@ export {
   LANGS,
   CLIENTS,
   MAX_SEEDS,
+  EXPANSION_GROUPS,
   suggestionTokens,
   buildSeeds,
   mergeObservations,

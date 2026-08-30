@@ -28,6 +28,9 @@ pnpm-debug.log*
 # Dados coletados / raw — nunca versionar
 data/
 data/raw/
+.data/
+*.sqlite
+*.sqlite-journal
 
 # Python venv (voz/ReclameAqui)
 .venv/
