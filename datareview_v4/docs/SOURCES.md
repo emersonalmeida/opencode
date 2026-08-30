@@ -74,9 +74,9 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 > **ToS/restrição:** Backoff exponencial em 429 (5 tentativas, timeout 30s).
 
-| **steam** | Steam | api | none | media | query, action, appId, language, limit | name, price, appid, reviewSummary, reviews | https://store.steampowered.com/api/storesearch/?term= (busca real portada; reviews ainda em ponte) | — | PRONTO |
+| **steam** | Steam | api | none | media | query, country, limit | name, price, appid, score, platforms, metacritic | https://store.steampowered.com/api/storesearch/?term= (busca real; reviews ainda em ponte) | — | PRONTO |
 
-> **ToS/restrição:** 2 acoes (search/reviews); language all/portuguese/english; pais via country (cc).
+> **ToS/restrição:** Busca via StoreSearch API (sem chave; cc default br). Reviews (appreviews JSON) seguem como ponte do v1.
 
 | **reclameaqui** | ReclameAqui | api | none | reviews | query, action, company, limit | company, complaint, status, date, title, text | https://iosearch.reclameaqui.com.br/raichu-io-site-search-v1/... | — | PRONTO |
 
@@ -182,9 +182,9 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 | **ibge-nomes** | IBGE (ranking de nomes) | api | none | custom | limit | nome, frequencia, rank | https://servicodados.ibge.gov.br/api/v2/censos/nomes/ranking | — | PRONTO |
 
-| **deezer** | Deezer (charts) | api | none | media | query, limit | id, title, artist, album, duration, rank, url | https://api.deezer.com/search (busca real portada; chart ainda em ponte) | — | PRONTO |
+| **deezer** | Deezer | api | none | media | query, limit | id, title, artist, album, duration, rank, url | https://api.deezer.com/search (busca real; chart ainda em ponte) | — | PRONTO |
 
-> **ToS/restrição:** Busca pública sem chave; dados de faixa/artista/álbum.
+> **ToS/restrição:** Busca pública sem chave; dados de faixa/artista/álbum. Chart (trending) segue como ponte do v1.
 
 | **openlibrary-trending** | Open Library (em alta) | api | none | trends, custom | period, limit | title, author, year, score, url | https://openlibrary.org/trending/{daily\|weekly\|monthly}.json | — | PRONTO |
 
@@ -205,13 +205,13 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 | id | label | método | auth | capacidades | parâmetros | dados | recurso | chaves | status |
 |----|-------|--------|------|-------------|------------|-------|---------|--------|--------|
-| **apple** | Apple App Store (reviews) | api | none | reviews, media | appId, country, countries, mode, limit | title, rating, author, date, version, country, helpful, text | amp-api apps.apple.com/api/apps/v1/catalog/{cc}/apps/{id}/reviews + RSS itunes customerreviews (fallback) | — | PRONTO |
+| **apple** | Apple App Store (reviews) | api | none | reviews, media | query, country, engine, limit | title, rating, author, date, version, country, helpful, text | amp-api apps.apple.com/api/apps/v1/catalog/{cc}/apps/{id}/reviews + RSS itunes customerreviews (fallback) | — | PRONTO |
 
-> **ToS/restrição:** amp-api primaria (l=pt-BR, sort mostRecent/mostHelpful por engine); RSS fallback. SSR sweep multi-pais do v1 nao portado (erro honesto se amp-api 429).
+> **ToS/restrição:** amp-api primaria (l=pt-BR, sort mostRecent/mostHelpful por engine); RSS fallback. SSR sweep multi-pais do v1 nao portado (erro honesto se amp-api 429.; query = id do app).
 
-| **googleplay** | Google Play (reviews/apps) | api | none | reviews, media | appId, term, action, country, lang, num, collection, category, sort | title, score, author, date, version, thumbsUp, text, appInfo | scraping HTML publico /store/search + /store/apps/details (search\|app); reviews exigem RPC batchexecute (honesto) | — | PRONTO |
+| **googleplay** | Google Play (reviews/apps) | api | none | reviews, media | query, engine, country, limit | title, score, author, date, version, thumbsUp, text, appInfo | scraping HTML publico /store/search + /store/apps/details (search\|app); reviews exigem RPC batchexecute (honesto) | — | PRONTO |
 
-> **ToS/restrição:** Padrao country br / lang pt_BR; search\|app nativos (funcionam em datacenter); reviews = RPC pago/nao-embutido -> erro honesto.
+> **ToS/restrição:** Padrao country br / lang pt_BR; engine = search\|app (funcionam em datacenter); reviews = RPC pago/nao-embutido -> erro honesto.
 
 | **itunes-proxy** | iTunes/Apple proxy (passthrough) | other | none | custom | url | raw | allowlist ^https://(itunes\|apps)\.apple\.com/ | — | PRONTO |
 
