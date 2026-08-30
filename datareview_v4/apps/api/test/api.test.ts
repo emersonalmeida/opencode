@@ -167,13 +167,13 @@ test("run: validações de entrada", async () => {
   assert.equal(noQuery.status, 400);
 });
 
-test("run: fonte fora do catálogo dá 404; fonte conhecida não portada dá 501", async () => {
+test("run: fonte fora do catálogo dá 404; fonte conhecida sem coletor no runtime dá 501", async () => {
   const unknown = await post("/api/run", { source: "zzz", query: "x" });
   assert.equal(unknown.status, 404);
   const unimplemented = await post("/api/run", { source: "googleplay", query: "x" });
   assert.equal(unimplemented.status, 501);
   assert.equal(unimplemented.json.catalog.id, "googleplay");
-  assert.equal(unimplemented.json.catalog.status, "bridge");
+  assert.equal(unimplemented.json.catalog.status, "implemented");
 });
 
 test("pipeline: coleta + derive, IA ausente não bloqueia", async () => {

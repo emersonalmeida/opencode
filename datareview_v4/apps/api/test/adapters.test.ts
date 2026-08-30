@@ -15,6 +15,8 @@ import { apple } from "../src/adapters/apple.js";
 import { youtube } from "../src/adapters/youtube.js";
 import { serpFactory } from "../src/adapters/serp.js";
 import { trends } from "../src/adapters/trends.js";
+import { reclameaqui } from "../src/adapters/reclameaqui.js";
+import { googleplay } from "../src/adapters/googleplay.js";
 import type { InspectableAdapter } from "../src/adapters/base.js";
 import {
   brasilapiFeriados, brasilapiTaxas, crypto, frankfurter, githubTrending, ibgeNomes, mastodonTrends,
@@ -786,6 +788,56 @@ test("registry: lote 12 registrado (trends)", () => {
   const built = buildAdapter("trends", {});
   assert.ok(built.source, "trends deve ter adaptador real");
   assert.equal(built.source!.id, "trends");
+});
+
+test("reclameaqui: empresas viram itens company", () => {
+  const first = one(
+    mapItems(reclameaqui, {
+      action: "search",
+      query: "nubank",
+      companies: [{ id: "1", name: "Nubank", shortname: "nubank", city: "São Paulo", state: "SP", url: "https://www.reclameaqui.com.br/empresa/nubank/" }],
+    }),
+  );
+  assert.equal(first.source, "reclameaqui");
+  assert.equal(first.kind, "company");
+  assert.equal(first.title, "Nubank");
+  assert.equal((first.meta as Record<string, unknown>).shortname, "nubank");
+});
+
+test("reclameaqui: reclamações viram itens complaint com status", () => {
+  const first = one(
+    mapItems(reclameaqui, {
+      action: "complaints",
+      companyId: "1",
+      complaints: [{ id: "9", title: "Tarifa cobrada", text: "Cobrança indevida", created: "2026-08-01", status: "Resolvido", score: 7, url: "https://www.reclameaqui.com.br/reclamar/9/" }],
+    }),
+  );
+  assert.equal(first.kind, "complaint");
+  assert.equal((first.meta as Record<string, unknown>).status, "Resolvido");
+  assert.equal(first.score, 7);
+  assert.match(first.text ?? "", /Cobrança/);
+});
+
+test("googleplay: apps viram itens app com score", () => {
+  const first = one(
+    mapItems(googleplay, {
+      action: "search",
+      query: "typescript",
+      apps: [{ appId: "com.termux", title: "Termux", summary: "Terminal emulador", developer: "Termux", score: 4.5, ratings: 100000, url: "https://play.google.com/store/apps/details?id=com.termux" }],
+    }),
+  );
+  assert.equal(first.source, "googleplay");
+  assert.equal(first.kind, "app");
+  assert.equal(first.title, "Termux");
+  assert.equal(first.score, 4.5);
+});
+
+test("registry: lote 13 registrado (reclameaqui + googleplay)", () => {
+  for (const id of ["reclameaqui", "googleplay"]) {
+    const built = buildAdapter(id, {});
+    assert.ok(built.source, `${id} deve ter adaptador real`);
+    assert.equal(built.source!.id, id);
+  }
 });
 
 test("ibge-nomes: ranking do censo (entry.res)", () => {

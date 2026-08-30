@@ -78,9 +78,9 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 > **ToS/restrição:** 2 acoes (search/reviews); language all/portuguese/english; pais via country (cc).
 
-| **reclameaqui** | ReclameAqui | api | none | reviews | query, action, company, limit | company, complaint, status, date, title, text | https://iosearch.reclameaqui.com.br/raichu-io-site-search-v1/... | — | PONTE(v1) |
+| **reclameaqui** | ReclameAqui | api | none | reviews | query, action, company, limit | company, complaint, status, date, title, text | https://iosearch.reclameaqui.com.br/raichu-io-site-search-v1/... | — | PRONTO |
 
-> **ToS/restrição:** Protecao Cloudflare -> fallback curl_cffi/Playwright (ra-fetch.py). Status derivado: Replica/Resolvido/Nao resolvido/Respondido/Nao respondido.
+> **ToS/restrição:** Cloudflare pode bloquear TLS do Node (datacenter) -> erro honesto com orientacao (curl_cffi/rede). Status derivado: Replica/Resolvido/Nao resolvido/Respondido/Nao respondido.
 
 | **producthunt** | Product Hunt | feed | byok | media, news | query, action, category, limit | id, name, tagline, url, date, rank, votesCount, commentsCount, topics | https://www.producthunt.com/feed (+?category=) e GraphQL v2 | PRODUCT_HUNT_TOKEN | PRONTO |
 
@@ -209,9 +209,9 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 > **ToS/restrição:** amp-api primaria (l=pt-BR, sort mostRecent/mostHelpful por engine); RSS fallback. SSR sweep multi-pais do v1 nao portado (erro honesto se amp-api 429).
 
-| **googleplay** | Google Play (reviews/apps) | api | none | reviews, media | appId, term, action, country, lang, num, collection, category, sort | title, score, author, date, version, thumbsUp, text, appInfo | google-play-scraper (npm) | — | PONTE(v1) |
+| **googleplay** | Google Play (reviews/apps) | api | none | reviews, media | appId, term, action, country, lang, num, collection, category, sort | title, score, author, date, version, thumbsUp, text, appInfo | scraping HTML publico /store/search + /store/apps/details (search\|app); reviews exigem RPC batchexecute (honesto) | — | PRONTO |
 
-> **ToS/restrição:** Padrao country br / lang pt_BR; multi-sort com dedupe.
+> **ToS/restrição:** Padrao country br / lang pt_BR; search\|app nativos (funcionam em datacenter); reviews = RPC pago/nao-embutido -> erro honesto.
 
 | **itunes-proxy** | iTunes/Apple proxy (passthrough) | other | none | custom | url | raw | allowlist ^https://(itunes\|apps)\.apple\.com/ | — | PRONTO |
 
