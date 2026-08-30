@@ -99,7 +99,9 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 > **ToS/restrição:** Busca de jogos indie; scrape HTML.
 
-| **devto** | DEV.to | api | none | news, code | query, limit | title, url, author, reactions_count, comments_count, tags, published | https://dev.to/api/articles | — | PONTE(v1) |
+| **devto** | DEV Community | api | none | news, code | query, limit | title, url, author, reactions_count, comments_count, tags, published | https://dev.to/api/articles (por tag — sem busca full-text pública) | — | PRONTO |
+
+> **ToS/restrição:** Forem API pública por tag (query vira tag); per_page<=30.
 
 | **lobsters** | Lobsters | api | none | news, social | query, limit | title, url, author, score, comments_count | https://lobste.rs/search.json | — | PONTE(v1) |
 
@@ -119,11 +121,17 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 > **ToS/restrição:** Busca pública sem chave; papers com doi, autores, citações.
 
-| **crossref** | Crossref | api | none | academic | query, limit | doi, title, authors, year, journal, citation_count | https://api.crossref.org/works | — | PONTE(v1) |
+| **crossref** | Crossref | api | none | academic | query, limit | doi, title, authors, year, journal, citation_count | https://api.crossref.org/works | — | PRONTO |
 
-| **openlibrary** | Open Library | api | none | custom | query, limit | title, author, year, isbn, cover, url | https://openlibrary.org/search.json | — | PONTE(v1) |
+> **ToS/restrição:** Busca bibliográfica pública sem chave (rows<=25).
 
-| **npm** | npm | api | none | code | query, limit | name, version, description, score, downloads, url | https://registry.npmjs.org/-/v1/search?text= | — | PONTE(v1) |
+| **openlibrary** | Open Library | api | none | custom | query, limit | title, author, year, isbn, cover, url | https://openlibrary.org/search.json | — | PRONTO |
+
+> **ToS/restrição:** Busca pública sem chave (limit<=25).
+
+| **npm** | npm | api | none | code | query, limit | name, version, description, score, downloads, url | https://registry.npmjs.org/-/v1/search?text= | — | PRONTO |
+
+> **ToS/restrição:** Busca pública sem chave (size<=20).
 
 | **pypi** | PyPI | api | none | code | query, limit | name, version, summary, author, license, url | https://pypi.org/pypi/{name}/json | — | PONTE(v1) |
 

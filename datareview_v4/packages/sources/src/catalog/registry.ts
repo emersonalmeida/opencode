@@ -271,8 +271,8 @@ export const SOURCE_CATALOG: SourceCatalogEntry[] = [
     tosNote: "Busca de jogos indie; scrape HTML.",
   },
   {
-    id: "devto",
-    label: "DEV.to",
+id: "devto",
+    label: "DEV Community",
     group: "connectors",
     category: "Código",
     method: "api",
@@ -280,8 +280,9 @@ export const SOURCE_CATALOG: SourceCatalogEntry[] = [
     capabilities: ["news", "code"],
     params: ["query", "limit"],
     data: ["title", "url", "author", "reactions_count", "comments_count", "tags", "published"],
-    resource: "https://dev.to/api/articles",
-    status: "bridge",
+    resource: "https://dev.to/api/articles (por tag — sem busca full-text pública)",
+    status: "implemented",
+    tosNote: "Forem API pública por tag (query vira tag); per_page<=30.",
   },
   {
     id: "lobsters",
@@ -364,7 +365,8 @@ export const SOURCE_CATALOG: SourceCatalogEntry[] = [
     params: ["query", "limit"],
     data: ["doi", "title", "authors", "year", "journal", "citation_count"],
     resource: "https://api.crossref.org/works",
-    status: "bridge",
+    status: "implemented",
+    tosNote: "Busca bibliográfica pública sem chave (rows<=25).",
   },
   {
     id: "openlibrary",
@@ -377,7 +379,8 @@ export const SOURCE_CATALOG: SourceCatalogEntry[] = [
     params: ["query", "limit"],
     data: ["title", "author", "year", "isbn", "cover", "url"],
     resource: "https://openlibrary.org/search.json",
-    status: "bridge",
+    status: "implemented",
+    tosNote: "Busca pública sem chave (limit<=25).",
   },
   {
     id: "npm",
@@ -391,7 +394,8 @@ export const SOURCE_CATALOG: SourceCatalogEntry[] = [
     data: ["name", "version", "description", "score", "downloads", "url"],
     resource: "https://registry.npmjs.org/-/v1/search?text=",
     lookup: true,
-    status: "bridge",
+    status: "implemented",
+    tosNote: "Busca pública sem chave (size<=20).",
   },
   {
     id: "pypi",

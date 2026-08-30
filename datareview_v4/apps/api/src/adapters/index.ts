@@ -13,7 +13,7 @@ import {
   arxiv, gdelt, github, hackernews, reddit, semanticscholar, stackexchange, wikipedia,
 } from "./jsonSources.js";
 import {
-  bluesky, deezer, googlenews, mastodon, openalex, steam, wikidata,
+  bluesky, crossref, deezer, devto, googlenews, mastodon, npm, openalex, openlibrary, steam, wikidata,
 } from "./moreSources.js";
 import { SuggestSource } from "./suggest.js";
 
@@ -39,6 +39,10 @@ export const ADAPTERS: Record<string, AdapterFactory> = {
   wikidata: () => wikidata,
   openalex: () => openalex,
   mastodon: () => mastodon,
+  npm: () => npm,
+  crossref: () => crossref,
+  openlibrary: () => openlibrary,
+  devto: () => devto,
 };
 
 export interface BuiltAdapter {

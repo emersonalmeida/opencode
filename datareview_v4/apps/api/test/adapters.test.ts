@@ -5,7 +5,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import type { CollectOptions, NormalizedItem } from "@v4/contracts";
-import { bluesky, deezer, googlenews, mastodon, openalex, steam, wikidata } from "../src/adapters/moreSources.js";
+import { bluesky, crossref, deezer, devto, googlenews, mastodon, npm, openalex, openlibrary, steam, wikidata } from "../src/adapters/moreSources.js";
 import { buildAdapter } from "../src/adapters/index.js";
 
 const opts: CollectOptions = { query: "typescript" };
@@ -152,8 +152,100 @@ test("mastodon: normaliza posts por hashtag (limpa HTML do content)", () => {
   assert.ok(!first.text!.includes("<"));
 });
 
+test("npm: normaliza pacotes", () => {
+  const first = one(mapItems(npm, {
+    objects: [
+      {
+        package: {
+          name: "typescript",
+          version: "5.8.3",
+          description: "TypeScript is a language for application scale JavaScript development",
+          date: "2025-03-10T17:00:00.000Z",
+          keywords: ["node", "typescript"],
+          links: { npm: "https://www.npmjs.com/package/typescript" },
+          publisher: { username: "typescript-bot" },
+        },
+        score: { final: 0.9 },
+        searchScore: 0.95,
+      },
+    ],
+  }));
+  assert.equal(first.source, "npm");
+  assert.equal(first.kind, "package");
+  assert.equal(first.author, "typescript-bot");
+  assert.equal(first.score, 95);
+  assert.ok(first.url!.includes("npmjs.com/package/typescript"));
+});
+
+test("crossref: normaliza papers", () => {
+  const first = one(mapItems(crossref, {
+    message: {
+      items: [
+        {
+          DOI: "10.1000/xyz123",
+          title: ["TypeScript performance"],
+          URL: "https://doi.org/10.1000/xyz123",
+          author: [{ given: "Ada", family: "Lovelace" }],
+          "published-print": { "date-parts": [[2023, 5, 1]] },
+          "is-referenced-by-count": 9,
+          "container-title": ["J. Program. Lang."],
+          type: "journal-article",
+        },
+      ],
+    },
+  }));
+  assert.equal(first.source, "crossref");
+  assert.equal(first.kind, "paper");
+  assert.equal(first.author, "Ada Lovelace");
+  assert.equal(first.score, 9);
+  assert.equal(first.date, "2023");
+  assert.equal((first.meta as Record<string, unknown>).doi, "10.1000/xyz123");
+});
+
+test("openlibrary: normaliza livros", () => {
+  const first = one(mapItems(openlibrary, {
+    docs: [
+      {
+        key: "/works/OL1W",
+        title: "Programming TypeScript",
+        author_name: ["Boris Cherny"],
+        first_publish_year: 2019,
+        isbn: ["9781492037651"],
+        cover_i: 12345,
+      },
+    ],
+  }));
+  assert.equal(first.source, "openlibrary");
+  assert.equal(first.kind, "book");
+  assert.equal(first.author, "Boris Cherny");
+  assert.equal(first.id, "/works/OL1W");
+  assert.ok(first.url!.includes("/works/OL1W"));
+});
+
+test("devto: normaliza artigos por tag", () => {
+  const first = one(mapItems(devto, [
+    {
+      id: 42,
+      title: "TypeScript no front",
+      description: "Boas práticas",
+      url: "https://dev.to/ea/ts-front",
+      published_at: "2026-08-30T00:00:00Z",
+      positive_reactions_count: 21,
+      comments_count: 4,
+      tags: ["typescript", "webdev"],
+      reading_time_minutes: 5,
+      user: { name: "EA Dev", username: "ea" },
+    },
+  ]));
+  assert.equal(first.source, "devto");
+  assert.equal(first.kind, "article");
+  assert.equal(first.author, "EA Dev");
+  assert.equal(first.score, 21);
+  assert.equal((first.meta as Record<string, unknown>).readingMinutes, 5);
+});
+
 test("registry: lote 2 registrado (buildAdapter resolve fonte real)", () => {
-  for (const id of ["bluesky", "deezer", "steam", "googlenews", "wikidata", "openalex", "mastodon"]) {
+  for (const id of ["bluesky", "deezer", "steam", "googlenews", "wikidata", "openalex", "mastodon", "npm", "crossref", "openlibrary", "devto"]) {
     const built = buildAdapter(id, {});
     assert.ok(built.source, `${id} deve ter adaptador real`);
     assert.equal(built.source!.id, id);

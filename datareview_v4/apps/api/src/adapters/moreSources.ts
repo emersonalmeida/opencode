@@ -385,6 +385,209 @@ export const mastodon = defineAdapter(
   },
 );
 
+/* ------------------------------------------------------------------- npm ---- */
+/* registry.npmjs.org/-/v1/search — busca pública de pacotes, sem chave. */
+export const npm = defineAdapter(
+  {
+    id: "npm",
+    label: "npm",
+    kind: "package",
+    description: "Pacotes JavaScript (npm registry search público).",
+    capabilities: ["code"],
+    rateLimit: { rps: 1, burst: 1 },
+  },
+  {
+    async fetch(options: CollectOptions) {
+      const url = `https://registry.npmjs.org/-/v1/search?text=${encodeURIComponent(options.query)}&size=${cap(options.limit ?? 10, 20)}`;
+      return fetchJson(url, { signal: options.signal });
+    },
+    map(data: unknown): NormalizedItem[] {
+      return asArray(asRecord(data).objects)
+        .map((o) => {
+          const pkg = asRecord(asRecord(o).package);
+          const name = str(pkg.name);
+          if (!name) return null;
+          const links = asRecord(pkg.links);
+          const publisher = asRecord(pkg.publisher);
+          return item(
+            {
+              id: name,
+              title: name,
+              url: str(links.npm) || str(links.homepage) || undefined,
+              text: str(pkg.description) || undefined,
+              author: str(publisher.username) || undefined,
+              date: str(pkg.date) || undefined,
+              score: num(asRecord(o).searchScore) !== undefined ? Math.round(num(asRecord(o).searchScore)! * 100) : undefined,
+              meta: {
+                version: str(pkg.version) || undefined,
+                scope: str(pkg.scope) || undefined,
+                keywords: asArray(pkg.keywords),
+                scoreFinal: num(asRecord(asRecord(o).score).final),
+                maintanersCount: asArray(pkg.maintainers).length,
+              },
+            },
+            "npm",
+            "package",
+          );
+        })
+        .filter((x): x is NormalizedItem => x !== null);
+    },
+  },
+);
+
+/* --------------------------------------------------------------- Crossref - */
+/* api.crossref.org/works — busca bibliográfica pública, sem chave. */
+export const crossref = defineAdapter(
+  {
+    id: "crossref",
+    label: "Crossref",
+    kind: "paper",
+    description: "Publicações científicas (Crossref REST API — without key).",
+    capabilities: ["academic"],
+    rateLimit: { rps: 1, burst: 1 },
+  },
+  {
+    async fetch(options: CollectOptions) {
+      const url = `https://api.crossref.org/works?query.bibliographic=${encodeURIComponent(options.query)}&rows=${cap(options.limit ?? 10, 25)}`;
+      return fetchJson(url, { signal: options.signal });
+    },
+    map(data: unknown): NormalizedItem[] {
+      const items = asArray(asRecord(asRecord(asRecord(data).message).items));
+      return items
+        .map((w) => {
+          const work = asRecord(w);
+          const titles = asArray(work.title).map((t) => str(t)).filter(Boolean);
+          const title = titles[0];
+          if (!title) return null;
+          const authors = asArray(work.author)
+            .map((a) => {
+              const author = asRecord(a);
+              return [str(author.given), str(author.family)].filter(Boolean).join(" ");
+            })
+            .filter(Boolean);
+          const dateParts = asArray(asRecord(work["published-print"])["date-parts"]);
+          const yearRow = Array.isArray(dateParts[0]) ? (dateParts[0] as unknown[]) : [];
+          const year = yearRow[0] != null ? String(yearRow[0]) : undefined;
+          return item(
+            {
+              id: str(work.DOI) || title,
+              title,
+              url: str(work.URL) || (str(work.DOI) ? `https://doi.org/${work.DOI}` : undefined),
+              text: asArray(work["container-title"]).map((c) => str(c)).filter(Boolean)[0] || undefined,
+              author: authors[0],
+              date: year,
+              score: num(work["is-referenced-by-count"]),
+              meta: {
+                authors: authors.slice(0, 20),
+                doi: str(work.DOI) || undefined,
+                type: str(work.type) || undefined,
+                journal: asArray(work["container-title"]).map((c) => str(c)).filter(Boolean)[0] || undefined,
+              },
+            },
+            "crossref",
+            "paper",
+          );
+        })
+        .filter((x): x is NormalizedItem => x !== null);
+    },
+  },
+);
+
+/* ------------------------------------------------------------ Open Library - */
+/* openlibrary.org/search.json — busca pública de livros, sem chave. */
+export const openlibrary = defineAdapter(
+  {
+    id: "openlibrary",
+    label: "Open Library",
+    kind: "book",
+    description: "Livros do Open Library (search.json público).",
+    capabilities: ["custom"],
+    rateLimit: { rps: 1, burst: 1 },
+  },
+  {
+    async fetch(options: CollectOptions) {
+      const url = `https://openlibrary.org/search.json?q=${encodeURIComponent(options.query)}&limit=${cap(options.limit ?? 10, 25)}`;
+      return fetchJson(url, { signal: options.signal });
+    },
+    map(data: unknown): NormalizedItem[] {
+      return asArray(asRecord(data).docs)
+        .map((d) => {
+          const doc = asRecord(d);
+          const title = str(doc.title);
+          if (!title) return null;
+          const key = str(doc.key);
+          const authors = asArray(doc.author_name).map((a) => str(a)).filter(Boolean);
+          const firstIsbn = asArray(doc.isbn).map((i) => str(i)).filter(Boolean)[0];
+          return item(
+            {
+              id: key || `${title}-${doc.first_publish_year ?? ""}`,
+              title,
+              url: key ? `https://openlibrary.org${key}` : undefined,
+              text: typeof doc.first_publish_year === "number" ? String(doc.first_publish_year) : undefined,
+              author: authors[0],
+              meta: {
+                authors: authors.slice(0, 10),
+                firstPublishYear: doc.first_publish_year,
+                isbn: firstIsbn || undefined,
+                coverId: num(doc.cover_i),
+              },
+            },
+            "openlibrary",
+            "book",
+          );
+        })
+        .filter((x): x is NormalizedItem => x !== null);
+    },
+  },
+);
+
+/* ------------------------------------------------------------------ DEV.to - */
+/* API Forem pública — por tag (sem busca full-text pública; query vira tag). */
+export const devto = defineAdapter(
+  {
+    id: "devto",
+    label: "DEV Community",
+    kind: "article",
+    description: "Artigos dev por tag (Forem API pública — sem busca full-text).",
+    capabilities: ["news", "code"],
+    rateLimit: { rps: 1, burst: 1 },
+  },
+  {
+    async fetch(options: CollectOptions) {
+      const url = `https://dev.to/api/articles?tag=${encodeURIComponent(options.query)}&per_page=${cap(options.limit ?? 10, 30)}`;
+      return fetchJson(url, { signal: options.signal });
+    },
+    map(data: unknown): NormalizedItem[] {
+      return asArray(data)
+        .map((a) => {
+          const article = asRecord(a);
+          const title = str(article.title);
+          if (!title) return null;
+          const user = asRecord(article.user);
+          return item(
+            {
+              id: str(article.id) || title,
+              title,
+              url: str(article.url) || undefined,
+              text: str(article.description) || undefined,
+              author: str(user.name) || str(user.username) || undefined,
+              date: str(article.published_at) || undefined,
+              score: num(article.positive_reactions_count),
+              meta: {
+                comments: num(article.comments_count),
+                tags: asArray(article.tags),
+                readingMinutes: num(article.reading_time_minutes),
+              },
+            },
+            "devto",
+            "article",
+          );
+        })
+        .filter((x): x is NormalizedItem => x !== null);
+    },
+  },
+);
+
 export const MORE_JSON_ADAPTERS = {
   bluesky,
   deezer,
@@ -393,6 +596,10 @@ export const MORE_JSON_ADAPTERS = {
   wikidata,
   openalex,
   mastodon,
+  npm,
+  crossref,
+  openlibrary,
+  devto,
 } as const;
 
 export type MoreJsonAdapterId = keyof typeof MORE_JSON_ADAPTERS;
