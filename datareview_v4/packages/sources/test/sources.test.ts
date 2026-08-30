@@ -65,6 +65,32 @@ describe("SerpApiSource", () => {
     assert.match(res.error ?? "", /api key missing/);
   });
 
+  test("quota gerida externamente NAO consome duas vezes (orquestrador e dono)", async () => {
+    let used = 0;
+    const quota = {
+      filePath: "memory:test",
+      async budget() { return { limit: 250, used, resetsAt: Date.now() + 86_400_000 }; },
+      async remaining(count: number) { return used + count <= 250; },
+      async consume(count: number) { used += count; },
+      async reconcile() { return { limit: 250, used, resetsAt: Date.now() + 86_400_000 }; },
+    };
+    const fakeFetch = () => ({ ok: true, status: 200, json: async () => ({ suggestions: ["ruby", "rust"] }) }) as Response;
+    const original = globalThis.fetch;
+    globalThis.fetch = fakeFetch as unknown as typeof fetch;
+    try {
+      // 1) standalone: o proprio adaptador consome (1 credito)
+      const standalone = new SerpApiSource({ apiKey: "k", quota });
+      await standalone.collect({ query: "q", engine: "google_autocomplete" });
+      assert.equal(used, 1, "standalone deve consumir 1 credito");
+      // 2) orquestrado: NAO consome (o orquestrador ja consumiu)
+      const orchestrated = new SerpApiSource({ apiKey: "k", quota, quotaManagedExternally: true });
+      await orchestrated.collect({ query: "q", engine: "google_autocomplete" });
+      assert.equal(used, 1, "quota externa nao pode consumir (evita dupla contagem)");
+    } finally {
+      globalThis.fetch = original;
+    }
+  });
+
   describe("audit registry real", () => {
     test("55 fontes auditadas vindas da auditoria", () => {
       assert.equal(AUDIT_REGISTRY.length, 55);

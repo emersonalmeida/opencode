@@ -10,7 +10,7 @@
 import { describe, test } from "node:test";
 import { strict as assert } from "node:assert";
 import type { CollectOptions, CollectResponse, DatasetEntry, NormalizedItem } from "@v4/contracts";
-import { derive, normalizeText, runPipeline, runSource, runSourceWithFallback, stableId } from "../src/index.js";
+import { derive, deriveFromDataset, normalizeText, runPipeline, runSource, runSourceWithFallback, stableId } from "../src/index.js";
 import type { AIPort, SerpApiQuotaPort, SourcePort, StoragePort } from "../src/index.js";
 
 /* ------------------------------------------------------------- fakes --- */
@@ -175,6 +175,20 @@ describe("pipeline", () => {
     assert.equal(called, false);
   });
 });
+describe("deriveFromDataset", () => {
+  test("monta stats + hint sob demanda a partir do storage", async () => {
+    const storage = new MemoryStorage();
+    await storage.upsertMany([
+      { key: "a", item: { id: "a", source: "hn", kind: "post", title: "Titulo A" }, collectedAt: 1 },
+      { key: "b", item: { id: "b", source: "hn", kind: "post", title: "Titulo B", score: 3 }, collectedAt: 2 },
+    ]);
+    const gold = await deriveFromDataset(storage);
+    assert.equal(gold.stats.total, 2);
+    assert.equal(gold.stats.bySource.hn, 2);
+    assert.ok(gold.hint.includes("DATASET: 2 itens"));
+  });
+});
+
 /* ------------------------------------------------------- fallback (serpapi) -- */
 
 /** Quota fake — rastreia consumo em memoria. */

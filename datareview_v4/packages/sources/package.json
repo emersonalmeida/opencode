@@ -12,7 +12,8 @@
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "node --import tsx --test test/sources.test.ts"
+    "test": "node --import tsx --test test/sources.test.ts test/catalog.test.ts",
+    "gen:catalog": "tsx scripts/gen-catalog.mts"
   },
   "dependencies": {
     "@v4/contracts": "workspace:*",

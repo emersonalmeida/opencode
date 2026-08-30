@@ -20,7 +20,7 @@ export const SERPAPI_FALLBACKS: Readonly<Record<string, SerpApiFallback>> = {
   youtube: { engine: "youtube_search", capabilities: ["media", "search"] },
   reddit: { engine: "google_search", capabilities: ["social"] },
   apple: { engine: "apple_app_store", capabilities: ["search"] },
-  google: { engine: "google_search", capabilities: ["search"] },
+  googleplay: { engine: "google_search", capabilities: ["search"] },
   gdelt: { engine: "google_news", capabilities: ["news"] },
   googlenews: { engine: "google_news", capabilities: ["news"] },
   wikipedia: { engine: "google_search", capabilities: ["search"] },

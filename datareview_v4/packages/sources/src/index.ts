@@ -1,3 +1,19 @@
+export {
+  SOURCE_CATALOG,
+  catalogByGroup,
+  catalogCount,
+  getSourceCatalogEntry,
+  listSourceCatalog,
+  toSourceDescriptor,
+} from "./catalog/index.js";
+export type {
+  SourceCatalogEntry,
+  SourceAuth,
+  SourceGroup,
+  SourceMethod,
+  SourceStatus,
+} from "./catalog/index.js";
+
 export { SERPAPI_FALLBACKS } from "./serpapi/fallbacks.js";
 export type { SerpApiFallback } from "./serpapi/fallbacks.js";
 export {
