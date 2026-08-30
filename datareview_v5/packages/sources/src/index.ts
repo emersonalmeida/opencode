@@ -22,3 +22,11 @@ export {
   compareEnabledThenAuth,
 } from "./activation.js";
 export type { ActivationOverrides } from "./activation.js";
+export {
+  createSources,
+  sourcesFromEnv,
+  collectAll,
+} from "./sources.js";
+export type { SourceRegistry } from "./sources.js";
+export { keysFromEnv } from "./keys.js";
+export type { ApiKeys } from "./keys.js";
