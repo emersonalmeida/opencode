@@ -50,8 +50,8 @@ export const SOURCE_CATALOG: SourceCatalogEntry[] = [
     params: ["terms", "region", "lang", "timeframe", "gprop", "limit"],
     data: ["timeseries", "geo_ranking", "related_searches"],
     resource: "https://trends.google.com/trends/api/explore + widgetdata/multiline|comparedgeo|relatedsearches",
-    status: "bridge",
-    tosNote: "3 visoes (timeseries/geo/related); mesma tecnica do pytrends; cookie CONSENT.",
+    status: "implemented",
+    tosNote: "3 visoes (timeseries/geo/related); mesma tecnica do pytrends; cookie CONSENT; cache 30min p/ mitigar 429. IP de datacenter pode receber 429/500 (anti-bot do Google) - erro honesto.",
   },
   {
     id: "trending",

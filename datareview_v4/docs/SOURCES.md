@@ -30,9 +30,9 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 >
 > **Operação:** Bloqueados/nao implementados: tiktok, pinterest, twitch, soundcloud, spotify, walmart/alibaba, apple/play, instagram/x, tenor.
 
-| **trends** | Google Trends (explore) | api | none | trends | terms, region, lang, timeframe, gprop, limit | timeseries, geo_ranking, related_searches | https://trends.google.com/trends/api/explore + widgetdata/multiline\|comparedgeo\|relatedsearches | — | PONTE(v1) |
+| **trends** | Google Trends (explore) | api | none | trends | terms, region, lang, timeframe, gprop, limit | timeseries, geo_ranking, related_searches | https://trends.google.com/trends/api/explore + widgetdata/multiline\|comparedgeo\|relatedsearches | — | PRONTO |
 
-> **ToS/restrição:** 3 visoes (timeseries/geo/related); mesma tecnica do pytrends; cookie CONSENT.
+> **ToS/restrição:** 3 visoes (timeseries/geo/related); mesma tecnica do pytrends; cookie CONSENT; cache 30min p/ mitigar 429. IP de datacenter pode receber 429/500 (anti-bot do Google) - erro honesto.
 
 | **trending** | Google Trends Em alta | api | none | trends, news | geo, hours, limit | title, traffic, link, news_items, geo, hours | https://trends.google.com/trending/rpc?rpcids=i0OFE (batchexecute) + /trending/rss | — | PRONTO |
 

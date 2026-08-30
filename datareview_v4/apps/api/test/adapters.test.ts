@@ -14,6 +14,7 @@ import { lobsters, suggestProvider, web } from "../src/adapters/uni.js";
 import { apple } from "../src/adapters/apple.js";
 import { youtube } from "../src/adapters/youtube.js";
 import { serpFactory } from "../src/adapters/serp.js";
+import { trends } from "../src/adapters/trends.js";
 import type { InspectableAdapter } from "../src/adapters/base.js";
 import {
   brasilapiFeriados, brasilapiTaxas, crypto, frankfurter, githubTrending, ibgeNomes, mastodonTrends,
@@ -756,6 +757,35 @@ test("registry: lote 11 registrado (serp)", () => {
   const built = buildAdapter("serp", {});
   assert.ok(built.source, "serp deve ter adaptador real");
   assert.equal(built.source!.id, "serp");
+});
+
+test("trends: achatado em related + geo + timeline (1 item cada view)", () => {
+  const items = mapItems(trends, {
+    terms: ["typescript"],
+    geo: "BR",
+    timeframe: "today 3-m",
+    related: [
+      { text: "typescript book", value: 100, kind: "top" },
+      { text: "typescript tutorial", value: 42, kind: "rising" },
+    ],
+    regions: [
+      { region: "Brasil", values: [100, 80] },
+      { region: "São Paulo", values: [60, 40] },
+    ],
+    timeline: { isPartial: true, points: [{ date: "ago/2026", values: [50] }, { date: "set/2026", values: [80] }] },
+  });
+  assert.equal(items.length, 5);
+  const related = items.find((i) => (i.meta as Record<string, unknown>)?.view === "related");
+  assert.equal(related?.title, "typescript book");
+  assert.equal(related?.score, 100);
+  const tl = items.find((i) => (i.meta as Record<string, unknown>)?.view === "timeline");
+  assert.match(tl?.text ?? "", /pico 80\/100/);
+});
+
+test("registry: lote 12 registrado (trends)", () => {
+  const built = buildAdapter("trends", {});
+  assert.ok(built.source, "trends deve ter adaptador real");
+  assert.equal(built.source!.id, "trends");
 });
 
 test("ibge-nomes: ranking do censo (entry.res)", () => {
