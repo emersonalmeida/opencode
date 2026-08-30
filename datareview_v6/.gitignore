@@ -1,0 +1,30 @@
+# Dependências
+node_modules/
+.pnpm-store/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+.vite/
+
+# Ambiente
+.env
+.env.*
+!.env.example
+
+# IDE e SO
+.DS_Store
+.idea/
+.vscode/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Dados coletados / raw — nunca versionar
+data/
+data/raw/
+.data/
+*.sqlite
+*.sqlite-journal

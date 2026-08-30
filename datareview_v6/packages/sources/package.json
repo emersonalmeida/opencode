@@ -1,0 +1,28 @@
+{
+  "name": "@v6/sources",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./audit": "./src/audit/index.ts",
+    "./quota": "./src/serpapi/quota.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --import tsx --test test/sources.test.ts test/catalog.test.ts",
+    "demo": "tsx scripts/demo.mts",
+    "gen:catalog": "tsx scripts/gen-catalog.mts"
+  },
+  "dependencies": {
+    "@v6/contracts": "workspace:*",
+    "@v6/domain": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.8.3"
+  }
+}
