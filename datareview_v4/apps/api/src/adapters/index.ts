@@ -18,6 +18,7 @@ import {
 import { SuggestSource } from "./suggest.js";
 import { uniSources } from "./uni.js";
 import { appleSources } from "./apple.js";
+import { youtube } from "./youtube.js";
 import { INFRA_ADAPTERS } from "./infraSources.js";
 import { codeSources } from "./codeSources.js";
 import { mediaSources } from "./mediaSources.js";
@@ -55,6 +56,7 @@ export const ADAPTERS: Record<string, AdapterFactory> = {
   ...dataSources,
   ...uniSources,
   ...appleSources,
+  youtube: () => youtube,
 };
 
 export interface BuiltAdapter {

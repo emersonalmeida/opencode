@@ -42,9 +42,9 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 > **ToS/restrição:** bing/ddg sem chave; Brave e Google CSE exigem chave BYOK. DDG rate-limita datacenter.
 
-| **youtube** | YouTube | scrape | none | media, social | query, action, limit, order, videoId | videoId, title, channel, published, views, duration, link, thumb | scraping ytInitialData (/results) + youtubei/v1/next (comentarios) | YOUTUBE_API_KEY | PONTE(v1) |
+| **youtube** | YouTube | scrape | none | media, social | query, action, limit, order, videoId | videoId, title, channel, published, views, duration, link, thumb | scraping ytInitialData (/results) + youtubei/v1/next (comentarios) | YOUTUBE_API_KEY | PRONTO |
 
-> **ToS/restrição:** Sem chave = scraping; ORDEM relevance/date/views/rating; comentarios ate ~10 paginas.
+> **ToS/restrição:** Sem chave = scraping; ORDEM relevance/date/views/rating via engine; comments best-effort (pode falhar com erro honesto).
 
 | **reddit** | Reddit | api | oauth | social | query, action, subreddit, limit | title, url, author, score, subreddit, numComments, created, text | https://reddit.com/r/… + OAuth client_credentials -> oauth.reddit.com | REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET | PRONTO |
 

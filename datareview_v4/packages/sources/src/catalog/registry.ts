@@ -94,8 +94,8 @@ export const SOURCE_CATALOG: SourceCatalogEntry[] = [
     data: ["videoId", "title", "channel", "published", "views", "duration", "link", "thumb"],
     resource: "scraping ytInitialData (/results) + youtubei/v1/next (comentarios)",
     keys: ["YOUTUBE_API_KEY"],
-    status: "bridge",
-    tosNote: "Sem chave = scraping; ORDEM relevance/date/views/rating; comentarios ate ~10 paginas.",
+    status: "implemented",
+    tosNote: "Sem chave = scraping; ORDEM relevance/date/views/rating via engine; comments best-effort (pode falhar com erro honesto).",
   },
   {
     id: "reddit",

@@ -12,6 +12,7 @@ import { cratesio, doaj, npmDownloads, pypi, rubygems } from "../src/adapters/co
 import { archive, itchio, openfoodfacts, podcasts, producthunt, tvmaze } from "../src/adapters/mediaSources.js";
 import { lobsters, suggestProvider, web } from "../src/adapters/uni.js";
 import { apple } from "../src/adapters/apple.js";
+import { youtube } from "../src/adapters/youtube.js";
 import {
   brasilapiFeriados, brasilapiTaxas, crypto, frankfurter, githubTrending, ibgeNomes, mastodonTrends,
   onthisday, openlibraryTrending, steamtop, trending, weather, wikitop, wikiviews,
@@ -252,13 +253,6 @@ test("registry: lote 2 registrado (buildAdapter resolve fonte real)", () => {
     assert.ok(built.source, `${id} deve ter adaptador real`);
     assert.equal(built.source!.id, id);
   }
-});
-
-test("registry: youtube continua 501 (não portado) com manifest bridge", () => {
-  const built = buildAdapter("youtube", {});
-  assert.equal(built.source, undefined);
-  assert.equal(built.manifest?.id, "youtube");
-  assert.equal(built.manifest?.status, "bridge");
 });
 
 test("paste: texto vira um item por linha (entrada manual)", () => {
@@ -696,6 +690,28 @@ test("registry: lote 9 registrado (apple)", () => {
   const built = buildAdapter("apple", {});
   assert.ok(built.source, "apple deve ter adaptador real");
   assert.equal(built.source!.id, "apple");
+});
+
+test("youtube: normaliza vídeos do ytInitialData", () => {
+  const items = mapItems(youtube, {
+    videos: [
+      { videoId: "abc123DEFgh", title: "TypeScript // Dicionário do Programador", channel: "Código Fonte TV", published: "há 3 dias", views: "1,2 mi de visualizações", duration: "7:33" },
+      { videoId: "xyz789aaa", title: "Sem visualizações", views: "8.230 visualizações" },
+    ],
+  });
+  assert.equal(items.length, 2);
+  const first = one(items);
+  assert.equal(first.source, "youtube");
+  assert.equal(first.kind, "video");
+  assert.equal(first.author, "Código Fonte TV");
+  assert.equal(first.score, 1_200_000);
+  assert.ok(first.url!.includes("abc123DEFgh"));
+});
+
+test("registry: lote 10 registrado (youtube)", () => {
+  const built = buildAdapter("youtube", {});
+  assert.ok(built.source, "youtube deve ter adaptador real");
+  assert.equal(built.source!.id, "youtube");
 });
 
 test("ibge-nomes: ranking do censo (entry.res)", () => {

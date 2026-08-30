@@ -170,9 +170,9 @@ test("run: validações de entrada", async () => {
 test("run: fonte fora do catálogo dá 404; fonte conhecida não portada dá 501", async () => {
   const unknown = await post("/api/run", { source: "zzz", query: "x" });
   assert.equal(unknown.status, 404);
-  const unimplemented = await post("/api/run", { source: "youtube", query: "x" });
+  const unimplemented = await post("/api/run", { source: "googleplay", query: "x" });
   assert.equal(unimplemented.status, 501);
-  assert.equal(unimplemented.json.catalog.id, "youtube");
+  assert.equal(unimplemented.json.catalog.id, "googleplay");
   assert.equal(unimplemented.json.catalog.status, "bridge");
 });
 

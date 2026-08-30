@@ -15,6 +15,9 @@ export interface FetchJsonInit {
   timeoutMs?: number;
   /** true = não envia header Accept (alguns hosts respondem mal a application/json). */
   noAccept?: boolean;
+  /** corpo/método para POST (usado por YouTube next, Google Trends explore). */
+  method?: string;
+  body?: string;
 }
 
 /**
@@ -41,6 +44,8 @@ export async function fetchJson(
   const { signal, cleanup } = withTimeout(init.signal, init.timeoutMs);
   try {
     const resp = await fetch(url, {
+      method: init.method,
+      body: init.body,
       headers: { "User-Agent": UA, ...(init.noAccept ? {} : { Accept: "application/json" }), ...init.headers },
       signal,
     });
