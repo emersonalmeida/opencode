@@ -33,6 +33,12 @@ test("/fontes renderiza o formulário de teste de fontes", () => {
   assert.match(html, /Coletar/);
 });
 
+test("/auditoria renderiza o resumo do registry", () => {
+  const html = render(["/auditoria"]);
+  assert.match(html, /Auditoria/);
+  assert.match(html, /Registry declarativo/);
+});
+
 test("helpers puros de formatação", () => {
   assert.equal(formatCount(999), "999");
   assert.equal(formatCount(1500), "1.5k");

@@ -90,8 +90,20 @@ export interface Stats {
   newest: string | null;
 }
 
+export interface AuditEntryShape {
+  id: string;
+  order: number;
+  name: string;
+  category: string;
+  status: "audited" | "in-progress" | "pending";
+  implemented: boolean;
+  sourceId: string;
+  summary: string;
+  capabilities: string[];
+}
+
 export interface AuditResponse {
-  entries: Array<Record<string, unknown>>;
+  entries: AuditEntryShape[];
   categories: Record<string, number>;
 }
 
