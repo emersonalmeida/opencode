@@ -82,7 +82,7 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 > **ToS/restrição:** Protecao Cloudflare -> fallback curl_cffi/Playwright (ra-fetch.py). Status derivado: Replica/Resolvido/Nao resolvido/Respondido/Nao respondido.
 
-| **producthunt** | Product Hunt | feed | byok | media, news | query, action, category, limit | id, name, tagline, url, date, rank, votesCount, commentsCount, topics | https://www.producthunt.com/feed (+?category=) e GraphQL v2 | PRODUCT_HUNT_TOKEN | PONTE(v1) |
+| **producthunt** | Product Hunt | feed | byok | media, news | query, action, category, limit | id, name, tagline, url, date, rank, votesCount, commentsCount, topics | https://www.producthunt.com/feed (+?category=) e GraphQL v2 | PRODUCT_HUNT_TOKEN | PRONTO |
 
 > **ToS/restrição:** Feed publico (~50 lancamentos/30min TTL cache); GraphQL v2 com token enriquece votes/comments/topics. Testado (6 itens demo).
 
@@ -95,7 +95,7 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 | id | label | método | auth | capacidades | parâmetros | dados | recurso | chaves | status |
 |----|-------|--------|------|-------------|------------|-------|---------|--------|--------|
-| **itchio** | itch.io | scrape | none | media | query, limit | title, url, price, description | scraping https://itch.io/search | — | PONTE(v1) |
+| **itchio** | itch.io | scrape | none | media | query, limit | title, url, price, description | scraping https://itch.io/search | — | PRONTO |
 
 > **ToS/restrição:** Busca de jogos indie; scrape HTML.
 
@@ -141,11 +141,11 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 | **doaj** | DOAJ (open access) | api | none | academic | query, limit | title, doi, journal, authors, year, url | https://doaj.org/api/search/articles/{query} | — | PRONTO |
 
-| **openfoodfacts** | Open Food Facts | api | none | custom | query, limit | code, name, brands, nutriscore, nova, categories, url | https://world.openfoodfacts.org/cgi/search.pl?search_terms=&search_simple=1&action=process&json=1 | — | PONTE(v1) |
+| **openfoodfacts** | Open Food Facts | api | none | custom | query, limit | code, name, brands, nutriscore, nova, categories, url | https://world.openfoodfacts.org/cgi/search.pl?search_terms=&search_simple=1&action=process&json=1 | — | PRONTO |
 
-| **archive** | Internet Archive | api | none | media | query, type, limit | identifier, title, creator, date, downloads, type, url | https://archive.org/advancedsearch.php | — | PONTE(v1) |
+| **archive** | Internet Archive | api | none | media | query, type, limit | identifier, title, creator, date, downloads, type, url | https://archive.org/advancedsearch.php | — | PRONTO |
 
-| **tvmaze** | TVMaze | api | none | media | query, limit | id, name, genres, rating, premiered, status, url, summary | https://api.tvmaze.com/search/shows?q= | — | PONTE(v1) |
+| **tvmaze** | TVMaze | api | none | media | query, limit | id, name, genres, rating, premiered, status, url, summary | https://api.tvmaze.com/search/shows?q= | — | PRONTO |
 
 
 ## Descoberta (sem chave) (17)
@@ -162,7 +162,7 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 > **ToS/restrição:** Parse RSS/XML, limit 50; locale fixa pt-BR por ora.
 
-| **podcasts** | Apple Podcasts (charts) | feed | none | media | country, limit | title, artist, feed, artwork, rank | https://itunes.apple.com/{cc}/rss/toppodcasts/limit= | — | PONTE(v1) |
+| **podcasts** | Apple Podcasts (charts) | feed | none | media | country, limit | title, artist, feed, artwork, rank | https://itunes.apple.com/{cc}/rss/toppodcasts/limit= | — | PRONTO |
 
 | **crypto** | CoinGecko (crypto) | api | none | trends | limit | name, symbol, price, rank, change | https://api.coingecko.com/api/v3/search/trending | — | PONTE(v1) |
 

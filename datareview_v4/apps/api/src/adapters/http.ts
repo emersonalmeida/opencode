@@ -7,10 +7,14 @@ const UA =
   "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) " +
   "Chrome/140.0 Safari/537.36";
 
+export { UA };
+
 export interface FetchJsonInit {
   signal?: AbortSignal;
   headers?: Record<string, string>;
   timeoutMs?: number;
+  /** true = não envia header Accept (alguns hosts respondem mal a application/json). */
+  noAccept?: boolean;
 }
 
 /**
@@ -37,16 +41,14 @@ export async function fetchJson(
   const { signal, cleanup } = withTimeout(init.signal, init.timeoutMs);
   try {
     const resp = await fetch(url, {
-      headers: { "User-Agent": UA, Accept: "application/json", ...init.headers },
+      headers: { "User-Agent": UA, ...(init.noAccept ? {} : { Accept: "application/json" }), ...init.headers },
       signal,
     });
     if (!resp.ok) {
       const body = await resp.text().catch(() => "");
       throw new Error(`HTTP ${resp.status} ${resp.statusText}${body ? ` — ${body.slice(0, 160)}` : ""}`);
     }
-    return (await resp.json().catch(() => {
-      throw new Error(`resposta inválida (JSON) de ${url}`);
-    })) as unknown;
+    return fetchJsonBody(resp, url);
   } finally {
     cleanup();
   }
@@ -54,6 +56,33 @@ export async function fetchJson(
 
 export function safe(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
+}
+
+function fetchJsonBody(resp: Response, url: string): Promise<unknown> {
+  return resp.json().catch(() => {
+    throw new Error(`resposta inválida (JSON) de ${url}`);
+  });
+}
+
+/** Busca HTML/texto (scraping) — mesmo timeout/UA do fetchJson. */
+export async function fetchText(
+  url: string,
+  init: FetchJsonInit = {},
+): Promise<string> {
+  const { signal, cleanup } = withTimeout(init.signal, init.timeoutMs);
+  try {
+    const resp = await fetch(url, {
+      headers: { "User-Agent": UA, ...init.headers },
+      signal,
+    });
+    if (!resp.ok) {
+      const body = await resp.text().catch(() => "");
+      throw new Error(`HTTP ${resp.status} ${resp.statusText}${body ? ` — ${body.slice(0, 160)}` : ""}`);
+    }
+    return resp.text();
+  } finally {
+    cleanup();
+  }
 }
 
 /** Asserta shape de estrutura indexada (única checagem que os adaptadores fazem). */

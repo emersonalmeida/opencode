@@ -9,6 +9,7 @@ import { bluesky, crossref, deezer, devto, googlenews, mastodon, npm, openalex, 
 import { buildAdapter } from "../src/adapters/index.js";
 import { custom, embedSearch, feed, itunesProxy, paste } from "../src/adapters/infraSources.js";
 import { cratesio, doaj, npmDownloads, pypi, rubygems } from "../src/adapters/codeSources.js";
+import { archive, itchio, openfoodfacts, podcasts, producthunt, tvmaze } from "../src/adapters/mediaSources.js";
 
 const opts: CollectOptions = { query: "typescript" };
 
@@ -434,6 +435,89 @@ test("doaj: normaliza artigos (results ou data)", () => {
 
 test("registry: lote 5 registrado (pypi, rubygems, cratesio, doaj, npm-downloads)", () => {
   for (const id of ["pypi", "rubygems", "cratesio", "doaj", "npm-downloads"]) {
+    const built = buildAdapter(id, {});
+    assert.ok(built.source, `${id} deve ter adaptador real`);
+    assert.equal(built.source!.id, id);
+  }
+});
+
+test("archive: normaliza itens do Internet Archive", () => {
+  const first = one(mapItems(archive, {
+    response: {
+      numFound: 1,
+      docs: [
+        { identifier: "abc123", title: "O livro velho", creator: "Autor X", date: "1950", downloads: 5000, mediatype: "texts" },
+      ],
+    },
+  }));
+  assert.equal(first.source, "archive");
+  assert.equal(first.kind, "document");
+  assert.equal(first.score, 5000);
+  assert.ok(first.url!.includes("/details/abc123"));
+});
+
+test("tvmaze: normaliza séries", () => {
+  const first = one(mapItems(tvmaze, [
+    { score: 0.9, show: { id: 100, name: "Dark", url: "https://tvmaze.com/shows/100", rating: { average: 8.5 }, premiered: "2017-12-01", status: "Ended", genres: ["Drama", "Mystery"], summary: "<p>Família</p>", language: "German", image: { medium: "https://x/img.jpg" } } },
+  ]));
+  assert.equal(first.source, "tvmaze");
+  assert.equal(first.kind, "series");
+  assert.equal(first.title, "Dark");
+  assert.equal(first.score, 8.5);
+  assert.equal(first.date, "2017-12-01");
+});
+
+test("openfoodfacts: normaliza produtos", () => {
+  const first = one(mapItems(openfoodfacts, {
+    products: [
+      { code: "789000", product_name: "Arroz Integral", brands: "Tio João", nutriscore_grade: "b", nova_group: 1, ingredients_text: "arroz", categories_tags: ["en:cereals", "pt:graos"], image_url: "https://x/img.jpg" },
+    ],
+  }));
+  assert.equal(first.source, "openfoodfacts");
+  assert.equal(first.kind, "product");
+  assert.equal(first.title, "Arroz Integral");
+  assert.equal(first.text, "arroz");
+  assert.equal((first.meta as Record<string, unknown>).nutriscore, "b");
+});
+
+test("podcasts: normaliza charts do iTunes (JSON RSS)", () => {
+  const first = one(mapItems(podcasts, {
+    feed: {
+      entry: [
+        { "im:name": { label: "Pod" }, title: { label: "Pod — duração curta" }, id: { label: "https://podcasts.apple.com/pod/id1" }, "im:artist": { label: "Fulano" }, "im:image": [{ label: "https://x/s.jpg" }] },
+      ],
+    },
+  }));
+  assert.equal(first.source, "podcasts");
+  assert.equal(first.kind, "podcast");
+  assert.equal(first.author, "Fulano");
+  assert.equal(first.score, 1);
+});
+
+test("producthunt: normaliza o feed público (RSS)", () => {
+  const xml = `<rss><channel><item><title>App Foda — lançamento</title><link>https://www.producthunt.com/posts/app-foda</link><description>desc</description><pubDate>Sat, 30 Aug 2026 10:00:00 GMT</pubDate></item></channel></rss>`;
+  const first = one(mapItems(producthunt, xml));
+  assert.equal(first.source, "producthunt");
+  assert.equal(first.kind, "product");
+  assert.equal(first.title, "App Foda — lançamento");
+  assert.ok(first.url!.includes("producthunt.com/posts/app-foda"));
+});
+
+test("itchio: extrai títulos do HTML de busca", () => {
+  const html = `<div class="game_cell"><a class="title game_link" href="/game/meu-jogo" data-label="Game_title">Meu Jogo</a> <a class="title game_link" href="/game/outro">Outro</a></div>`;
+  const items = mapItems(itchio, html);
+  assert.ok(items.length >= 1);
+  assert.equal(items[0]!.source, "itchio");
+  assert.equal(items[0]!.kind, "game");
+  assert.equal(items[0]!.title, "Meu Jogo");
+});
+
+test("itchio: HTML sem jogos → erro honesto (map)", () => {
+  assert.throws(() => mapItems(itchio, "<html><body>empty</body></html>"), /nenhum jogo extraído/);
+});
+
+test("registry: lote 6 registrado (archive, tvmaze, openfoodfacts, podcasts, producthunt, itchio)", () => {
+  for (const id of ["archive", "tvmaze", "openfoodfacts", "podcasts", "producthunt", "itchio"]) {
     const built = buildAdapter(id, {});
     assert.ok(built.source, `${id} deve ter adaptador real`);
     assert.equal(built.source!.id, id);
