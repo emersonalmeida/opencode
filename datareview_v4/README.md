@@ -63,3 +63,7 @@ COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm --filter @v4/sources gen:catalog
 - ADR-0002 — SerpAPI como fallback multi-fonte
 - ADR-0003 — Stack do front (design system atômico próprio, tokens, WCAG 2.2)
 - ADR-0004 — Home focada em Suggest
+- ADR-0005 — Núcleo hexagonal da v3 + front enxuto com design da v1
+- ADR-0006 — Orquestrador é dono da quota; fonte externa declara não-quotada
+- ADR-0007 — IDs de fonte = id do catálogo; aliases; fallback SerpAPI = googleplay
+- ADR-0008 — Erro honesto (partial-OK) e persistência Bronze/Silver por run
