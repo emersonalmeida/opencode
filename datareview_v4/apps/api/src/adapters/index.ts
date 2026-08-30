@@ -16,6 +16,7 @@ import {
   bluesky, crossref, deezer, devto, googlenews, mastodon, npm, openalex, openlibrary, steam, wikidata,
 } from "./moreSources.js";
 import { SuggestSource } from "./suggest.js";
+import { INFRA_ADAPTERS } from "./infraSources.js";
 
 export type AdapterFactory = (keys: ApiKeys) => SourcePort;
 
@@ -43,6 +44,7 @@ export const ADAPTERS: Record<string, AdapterFactory> = {
   crossref: () => crossref,
   openlibrary: () => openlibrary,
   devto: () => devto,
+  ...INFRA_ADAPTERS,
 };
 
 export interface BuiltAdapter {

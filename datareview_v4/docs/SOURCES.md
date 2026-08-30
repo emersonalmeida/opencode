@@ -18,7 +18,7 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 | id | label | método | auth | capacidades | parâmetros | dados | recurso | chaves | status |
 |----|-------|--------|------|-------------|------------|-------|---------|--------|--------|
-| **suggest** | Google Suggest (autocomplete) | api | none | trends, custom | query, lang, gl, ds, limit | text, relevance, seed | https://suggestqueries.google.com/complete/search?client=chrome&q=&gl=&hl=&ds= | — | PONTE(v1) |
+| **suggest** | Google Suggest (autocomplete) | api | none | trends, custom | query, lang, gl, ds, limit | text, relevance, seed | https://suggestqueries.google.com/complete/search?client=chrome&q=&gl=&hl=&ds= | — | PRONTO |
 
 > **ToS/restrição:** Autocomplete público; expansion seeds a-z/0-9; verticais via ds ('' web, yt, n, sh).
 >
@@ -46,31 +46,31 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 > **ToS/restrição:** Sem chave = scraping; ORDEM relevance/date/views/rating; comentarios ate ~10 paginas.
 
-| **reddit** | Reddit | api | oauth | social | query, action, subreddit, limit | title, url, author, score, subreddit, numComments, created, text | OAuth client_credentials -> oauth.reddit.com; fallback *.json publico | REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET | PONTE(v1) |
+| **reddit** | Reddit | api | oauth | social | query, action, subreddit, limit | title, url, author, score, subreddit, numComments, created, text | https://reddit.com/r/… + OAuth client_credentials -> oauth.reddit.com | REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET | PRONTO |
 
 > **ToS/restrição:** JSON publico falha em datacenter (403); OAuth robusto.
 
-| **hackernews** | Hacker News | api | none | news, social | query, action, by, sort, limit | id, title, url, author, points, numComments, text, createdAt | https://hn.algolia.com/api/v1/search(_by_date) + /items/{id} | — | PONTE(v1) |
+| **hackernews** | Hacker News | api | none | news, social | query, action, by, sort, limit | id, title, url, author, points, numComments, text, createdAt | https://hn.algolia.com/api/v1/search(_by_date) + /items/{id} | — | PRONTO |
 
 > **ToS/restrição:** Arvore de comentarios achatada; testado no v1 (6 itens demo).
 
-| **gdelt** | GDELT (notícias globais) | api | none | news | query, sort, lang, limit, startDate, endDate | url, title, seendate, sourceCountry, tone, sourceLang | https://api.gdeltproject.org/api/v2/doc/doc?format=json | — | PONTE(v1) |
+| **gdelt** | GDELT (notícias globais) | api | none | news | query, sort, lang, limit, startDate, endDate | url, title, seendate, sourceCountry, tone, sourceLang | https://api.gdeltproject.org/api/v2/doc/doc?format=json | — | PRONTO |
 
 > **ToS/restrição:** Lang via LANG_MAP (pt/en/es/fr/de/it); campo seendate.
 
-| **arxiv** | arXiv | api | none | academic | query, limit, sortBy | id, title, summary, authors, published, updated, url, pdf, categories | https://export.arxiv.org/api/query?search_query=all: | — | PONTE(v1) |
+| **arxiv** | arXiv | api | none | academic | query, limit, sortBy | id, title, summary, authors, published, updated, url, pdf, categories | https://export.arxiv.org/api/query?search_query=all: | — | PRONTO |
 
 > **ToS/restrição:** XML atom parseado; paginacao start/max_results. Testado no v1 (3 itens demo).
 
-| **stackexchange** | StackExchange | api | none | academic | query, site, limit, sort | id, title, link, score, answerCount, viewCount, isAnswered, body, createdAt, tags, author | https://api.stackexchange.com/2.3/search/advanced + /questions/{id}/answers | — | PONTE(v1) |
+| **stackexchange** | StackExchange | api | none | academic | query, site, limit, sort | id, title, link, score, answerCount, viewCount, isAnswered, body, createdAt, tags, author | https://api.stackexchange.com/2.3/search/advanced + /questions/{id}/answers | — | PRONTO |
 
 > **ToS/restrição:** Sites: SO, pt.stackoverflow, superuser, serverfault, android, apple, webapps. Testado (6 itens demo).
 
-| **github** | GitHub (Search API) | api | byok | code | query, action, limit, sort, lang, qualifiers | name, description, url, stars, forks, openIssues, language, updatedAt, topics | https://api.github.com/search/repositories + /search/issues | GITHUB_TOKEN | PONTE(v1) |
+| **github** | GitHub (Search API) | api | byok | code | query, action, limit, sort, lang, qualifiers | name, description, url, stars, forks, openIssues, language, updatedAt, topics | https://api.github.com/search/repositories + /search/issues | GITHUB_TOKEN | PRONTO |
 
 > **ToS/restrição:** Sem token 10 req/min, com token 30 req/min; erro honesto com reset. Testado (6 itens demo).
 
-| **semanticscholar** | Semantic Scholar | api | none | academic | query, limit, sort | paperId, title, abstract, year, url, citationCount, authors | https://api.semanticscholar.org/graph/v1/paper/search | — | PONTE(v1) |
+| **semanticscholar** | Semantic Scholar | api | none | academic | query, limit, sort | paperId, title, abstract, year, url, citationCount, authors | https://api.semanticscholar.org/graph/v1/paper/search | — | PRONTO |
 
 > **ToS/restrição:** Backoff exponencial em 429 (5 tentativas, timeout 30s).
 
@@ -218,7 +218,7 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 | id | label | método | auth | capacidades | parâmetros | dados | recurso | chaves | status |
 |----|-------|--------|------|-------------|------------|-------|---------|--------|--------|
-| **feed** | RSS/Atom (feed monitor) | feed | none | news, custom | url, limit | title, text, url, author, date, feedUrl | RSS 2.0 e Atom 1.0 (qualquer feed); descoberta via fonte web (acao feed) | — | PONTE(v1) |
+| **feed** | RSS/Atom (feed monitor) | feed | none | news, custom | url, limit | title, text, url, author, date, feedUrl | RSS 2.0 e Atom 1.0 (qualquer feed); descoberta via fonte web (acao feed) | — | PRONTO |
 
 > **ToS/restrição:** Requer URL do feed. Agregador multi-feed (OPML), monitoramento com diff de novos, full-text via fonte web quando o feed traz so resumo.
 
@@ -230,7 +230,7 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 > **ToS/restrição:** A chave NUNCA e persistida no servidor (byok no browser). Templates prontos disponiveis.
 
-| **wikipedia** | Wikipedia (busca/artigo) | api | none | custom | query, action, title, limit | title, pageid, snippet, extract, ns, size, wordcount, timestamp | https://pt.wikipedia.org/w/api.php?action=query list=search / prop=extracts | — | PONTE(v1) |
+| **wikipedia** | Wikipedia (busca/artigo) | api | none | custom | query, action, title, limit | title, pageid, snippet, extract, ns, size, wordcount, timestamp | https://pt.wikipedia.org/w/api.php?action=query list=search / prop=extracts | — | PRONTO |
 
 > **ToS/restrição:** Testado no v1 (6 itens demo).
 

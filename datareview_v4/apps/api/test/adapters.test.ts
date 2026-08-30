@@ -7,6 +7,7 @@ import assert from "node:assert/strict";
 import type { CollectOptions, NormalizedItem } from "@v4/contracts";
 import { bluesky, crossref, deezer, devto, googlenews, mastodon, npm, openalex, openlibrary, steam, wikidata } from "../src/adapters/moreSources.js";
 import { buildAdapter } from "../src/adapters/index.js";
+import { custom, embedSearch, feed, itunesProxy, paste } from "../src/adapters/infraSources.js";
 
 const opts: CollectOptions = { query: "typescript" };
 
@@ -257,4 +258,93 @@ test("registry: youtube continua 501 (não portado) com manifest bridge", () => 
   assert.equal(built.source, undefined);
   assert.equal(built.manifest?.id, "youtube");
   assert.equal(built.manifest?.status, "bridge");
+});
+
+test("paste: texto vira um item por linha (entrada manual)", () => {
+  const first = one(mapItems(paste, { lines: ["primeira linha", "segunda linha"] }));
+  assert.equal(first.source, "paste");
+  assert.equal(first.kind, "document");
+  assert.equal(first.title, "primeira linha");
+  assert.equal(mapItems(paste, { lines: ["a", "b"] }).length, 2);
+});
+
+test("feed: normaliza RSS 2.0 genérico (query = URL do feed)", () => {
+  const xml = `<rss><channel><item><title>Post 1</title><link>https://ex.com/1</link><description>desc 1</description><author>autor@ex.com (Autor)</author><pubDate>Sat, 30 Aug 2026 10:00:00 GMT</pubDate><guid>g1</guid></item><item><title>Post 2</title><guid>g2</guid></item></channel></rss>`;
+  const items = mapItems(feed, xml);
+  assert.equal(items.length, 2);
+  assert.equal(items[0]!.title, "Post 1");
+  assert.equal(items[0]!.url, "https://ex.com/1");
+  assert.equal(items[0]!.author, "Autor");
+});
+
+test("feed: normaliza Atom 1.0", () => {
+  const xml = `<feed xmlns="http://www.w3.org/2005/Atom"><entry><title>Atom 1</title><link href="https://ex.com/a1"/><updated>2026-08-30T10:00:00Z</updated></entry></feed>`;
+  const first = one(mapItems(feed, xml));
+  assert.equal(first.kind, "article");
+  assert.equal(first.url, "https://ex.com/a1");
+});
+
+test("custom: JSON genérico sem chave 'data' vira itens (works/results/docs)", () => {
+  const first = one(mapItems(custom, {
+    results: [{ title: "Repo X", html_url: "https://github.com/a/x", description: "desc" }],
+  }));
+  assert.equal(first.source, "custom");
+  assert.equal(first.title, "Repo X");
+  assert.equal(first.url, "https://github.com/a/x");
+});
+
+test("custom: JSON raiz vira um item (heuristic)", () => {
+  const first = one(mapItems(custom, { id: 1, title: "Só", text: "um item" }));
+  assert.equal(first.title, "Só");
+  assert.equal(first.text, "um item");
+});
+
+test("custom: author aninhado (ex.: {author: {name}})", () => {
+  const first = one(mapItems(custom, [{ title: "t", author: { name: "EA" } }]));
+  assert.equal(first.author, "EA");
+});
+
+test("embed-search: resolve URLs (roteador → kind/id/fanoutTerm)", () => {
+  const first = one(mapItems(embedSearch, {
+    kind: "youtube", id: "dQw4w9WgXcQ", apiUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", fanoutTerm: "dQw4w9WgXcQ",
+  }));
+  assert.equal(first.source, "embed-search");
+  assert.match(first.title!, /^youtube:/);
+  assert.equal((first.meta as Record<string, unknown>).fanoutTerm, "dQw4w9WgXcQ");
+});
+
+test("embed-search: URL desconhecida falha honesto SEM rede", async () => {
+  await assert.rejects(
+    () => embedSearch.fetch({ query: "https://exemplo-desconhecido.com/xyz", limit: 10 }),
+    /URL não reconhecida/,
+  );
+});
+
+test("embed-search: URL youtube reconhecida no fetch", async () => {
+  const r = (await embedSearch.fetch({ query: "https://youtu.be/dQw4w9WgXcQ", limit: 10 })) as Record<string, string>;
+  assert.equal(r.kind, "youtube");
+  assert.equal(r.id, "dQw4w9WgXcQ");
+});
+
+test("itunes-proxy: hostname fora do allowlist falha SEM rede", async () => {
+  await assert.rejects(
+    () => itunesProxy.fetch({ query: "https://github.com/a/b", limit: 10 }),
+    /hostnames permitidos/,
+  );
+});
+
+test("registry: infra/manual registradas (paste, feed, custom, embed-search, itunes-proxy)", () => {
+  for (const id of ["paste", "feed", "custom", "embed-search", "itunes-proxy"]) {
+    const built = buildAdapter(id, {});
+    assert.ok(built.source, `${id} deve ter adaptador real`);
+    assert.equal(built.source!.id, id);
+  }
+});
+
+test("registry: 9 adaptadores originais agora implemented (sem manifest 501)", () => {
+  for (const id of ["suggest", "hackernews", "gdelt", "github", "arxiv", "stackexchange", "semanticscholar", "wikipedia", "reddit"]) {
+    const built = buildAdapter(id, {});
+    assert.ok(built.source, `${id} deve ter adaptador real`);
+    assert.equal(built.source!.id, id);
+  }
 });
