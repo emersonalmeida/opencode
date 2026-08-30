@@ -10,7 +10,8 @@
     "dev": "pnpm --parallel --filter \"./apps/*\" dev",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
-    "test": "pnpm -r test"
+    "test": "pnpm -r test",
+    "local": "pnpm install && pnpm -r typecheck && pnpm -r test && pnpm --filter @v5/sources demo"
   },
   "packageManager": "pnpm@11.24.0",
   "devDependencies": {

@@ -13,6 +13,7 @@
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "node --import tsx --test test/sources.test.ts test/catalog.test.ts",
+    "demo": "tsx scripts/demo.mts",
     "gen:catalog": "tsx scripts/gen-catalog.mts"
   },
   "dependencies": {
