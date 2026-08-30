@@ -74,9 +74,9 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 > **ToS/restrição:** Backoff exponencial em 429 (5 tentativas, timeout 30s).
 
-| **steam** | Steam | api | none | media | query, country, limit | name, price, appid, score, platforms, metacritic | https://store.steampowered.com/api/storesearch/?term= (busca real; reviews ainda em ponte) | — | PRONTO |
+| **steam** | Steam | api | none | media, reviews | query, country, limit, engine, language | name, price, appid, score, platforms, metacritic, review, recommended, votes | https://store.steampowered.com/api/storesearch/?term= (busca) / appreviews (engine=reviews) | — | PRONTO |
 
-> **ToS/restrição:** Busca via StoreSearch API (sem chave; cc default br). Reviews (appreviews JSON) seguem como ponte do v1.
+> **ToS/restrição:** Busca via StoreSearch API (sem chave; cc default br). Reviews via appreviews JSON (engine=reviews; query=appId).
 
 | **reclameaqui** | ReclameAqui | api | none | reviews | query, action, company, limit | company, complaint, status, date, title, text | https://iosearch.reclameaqui.com.br/raichu-io-site-search-v1/... | — | PRONTO |
 

@@ -131,18 +131,74 @@ export const steam = defineAdapter(
     id: "steam",
     label: "Steam",
     kind: "game",
-    description: "Jogos da loja Steam (StoreSearch API — sem chave).",
-    capabilities: ["media"],
+    description:
+      "Jogos da loja Steam (StoreSearch API; engine=reviews usa appreviews JSON).",
+    capabilities: ["media", "reviews"],
     rateLimit: { rps: 1, burst: 1 },
   },
   {
     async fetch(options: CollectOptions) {
-      const cc = /^[a-z]{2}$/.test(options.country ?? "") ? options.country : "br";
+      const engine = options.engine || "search";
+      if (engine === "reviews") {
+        const appId = String(options.query.trim());
+        if (!/^\d+$/.test(appId))
+          throw new Error("engine=reviews exige appId numerico como query");
+        const language = str(options.language) || "all";
+        const limit = cap(options.limit ?? 30, 100);
+        const params = new URLSearchParams({
+          json: "1",
+          language,
+          purchase_type: "all",
+          num_per_page: String(limit),
+          filter: "recent",
+        });
+        const url = `https://store.steampowered.com/appreviews/${appId}?${params}`;
+        return { appId, language, limit, reviewsUrl: url };
+      }
+      const cc = /^[a-z]{2}$/.test(options.country ?? "")
+        ? options.country
+        : "br";
       const url = `https://store.steampowered.com/api/storesearch/?term=${encodeURIComponent(options.query)}&cc=${cc}&l=english`;
       return fetchJson(url, { signal: options.signal });
     },
     map(data: unknown): NormalizedItem[] {
-      return asArray(asRecord(data).items)
+      const r = asRecord(data);
+      if (Array.isArray(r.reviews)) {
+        return asArray(r.reviews).map((raw) => {
+          const rev = asRecord(raw);
+          const author =
+            asRecord(rev.author) ?? ({} as Record<string, unknown>);
+          const votesUp = num(rev.votes_up);
+          const createdAt = num(rev.timestamp_created);
+          return item(
+            {
+              id: `steam:${str(r.appId)}:${str(rev.recommendationid)}`,
+              title:
+                `${votesUp ?? 0} ${String(rev.voted_up ?? "")}`.trim() ||
+                "steam review",
+              text: str(rev.review) || undefined,
+              author: str(author.steamid) || undefined,
+              date: createdAt
+                ? new Date(createdAt * 1000).toISOString()
+                : undefined,
+              score: votesUp ?? undefined,
+              meta: {
+                recommended: Boolean(rev.voted_up),
+                votesUp,
+                playtimeForeverHours: num(author.playtime_forever)
+                  ? Math.round(
+                      ((num(author.playtime_forever) ?? 0) / 60) * 10,
+                    ) / 10
+                  : undefined,
+                language: str(r.language) || undefined,
+              },
+            },
+            "steam",
+            "review",
+          );
+        });
+      }
+      return asArray(r.items)
         .map((r) => {
           const game = asRecord(r);
           const name = str(game.name);
@@ -155,8 +211,12 @@ export const steam = defineAdapter(
             {
               id: appId || name,
               title: name,
-              url: appId ? `https://store.steampowered.com/app/${appId}/` : undefined,
-              text: game.discount ? `${str(price.currency)} ${final !== undefined ? (final / 100).toFixed(2) : "?"}${game.discount ? ` (${str(game.discount)}% off)` : ""}` : undefined,
+              url: appId
+                ? `https://store.steampowered.com/app/${appId}/`
+                : undefined,
+              text: game.discount
+                ? `${str(price.currency)} ${final !== undefined ? (final / 100).toFixed(2) : "?"}${game.discount ? ` (${str(game.discount)}% off)` : ""}`
+                : undefined,
               score: num(metacritic.score),
               meta: {
                 priceCents: final,

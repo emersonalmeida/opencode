@@ -99,6 +99,8 @@ export interface CollectOptions {
   country?: string;
   /** Operador/vertical da fonte (ex.: "site:ycombinator.com" para HN via SERP). */
   engine?: string;
+  /** Idioma/locale linguístico quando a fonte suporta (ex.: "pt-BR", "all"), */
+  language?: string;
   /** Sinal de cancelamento da chamada. */
   signal?: AbortSignal;
 }
