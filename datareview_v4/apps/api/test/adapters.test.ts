@@ -8,6 +8,7 @@ import type { CollectOptions, NormalizedItem } from "@v4/contracts";
 import { bluesky, crossref, deezer, devto, googlenews, mastodon, npm, openalex, openlibrary, steam, wikidata } from "../src/adapters/moreSources.js";
 import { buildAdapter } from "../src/adapters/index.js";
 import { custom, embedSearch, feed, itunesProxy, paste } from "../src/adapters/infraSources.js";
+import { cratesio, doaj, npmDownloads, pypi, rubygems } from "../src/adapters/codeSources.js";
 
 const opts: CollectOptions = { query: "typescript" };
 
@@ -343,6 +344,96 @@ test("registry: infra/manual registradas (paste, feed, custom, embed-search, itu
 
 test("registry: 9 adaptadores originais agora implemented (sem manifest 501)", () => {
   for (const id of ["suggest", "hackernews", "gdelt", "github", "arxiv", "stackexchange", "semanticscholar", "wikipedia", "reddit"]) {
+    const built = buildAdapter(id, {});
+    assert.ok(built.source, `${id} deve ter adaptador real`);
+    assert.equal(built.source!.id, id);
+  }
+});
+
+test("pypi: lookup exato de pacote", () => {
+  const first = one(mapItems(pypi, {
+    info: {
+      name: "requests",
+      version: "2.32.3",
+      summary: "Python HTTP for Humans.",
+      author: "Kenneth Reitz",
+      license: "Apache-2.0",
+      requires_python: ">=3.8",
+      project_urls: { Homepage: "https://requests.readthedocs.io" },
+    },
+  }));
+  assert.equal(first.source, "pypi");
+  assert.equal(first.kind, "package");
+  assert.equal(first.title, "requests 2.32.3");
+  assert.equal(first.author, "Kenneth Reitz");
+  assert.equal(first.url, "https://requests.readthedocs.io");
+  assert.equal((first.meta as Record<string, unknown>).version, "2.32.3");
+});
+
+test("pypi: nome inválido recusa SEM rede", () => {
+  assert.rejects(() => pypi.fetch({ query: "../etc/passwd" }), /nome de pacote válido/);
+});
+
+test("rubygems: normaliza gems", () => {
+  const first = one(mapItems(rubygems, [
+    { name: "rails", version: "8.0.0", info: "Ruby on Rails", homepage_uri: "https://rubyonrails.org", downloads: 123456, version_created_at: "2026-08-01T00:00:00Z" },
+  ]));
+  assert.equal(first.source, "rubygems");
+  assert.equal(first.kind, "package");
+  assert.equal(first.title, "rails");
+  assert.equal(first.score, 123456);
+  assert.equal(first.url, "https://rubyonrails.org");
+});
+
+test("cratesio: normaliza crates", () => {
+  const first = one(mapItems(cratesio, {
+    crates: [
+      { id: "serde", name: "serde", max_version: "1.0.200", description: "bom", downloads: 5, recent_downloads: 3, updated_at: "2026-08-01T00:00:00Z" },
+    ],
+  }));
+  assert.equal(first.source, "cratesio");
+  assert.equal(first.kind, "package");
+  assert.equal(first.score, 3);
+  assert.ok(first.url!.includes("crates.io/crates/serde"));
+});
+
+test("npm-downloads: normaliza ponto agregado", () => {
+  const first = one(mapItems(npmDownloads, { downloads: 424242, start: "2026-08-01", end: "2026-08-08", package: "typescript" }));
+  assert.equal(first.source, "npm-downloads");
+  assert.equal(first.kind, "metric");
+  assert.equal(first.score, 424242);
+  assert.match(first.title!, /424\.242/);
+});
+
+test("npm-downloads: período inválido recusa SEM rede", () => {
+  assert.rejects(() => npmDownloads.fetch({ query: "typescript", engine: "banana" }), /período inválido/);
+});
+
+test("doaj: normaliza artigos (results ou data)", () => {
+  const first = one(mapItems(doaj, {
+    results: [
+      {
+        bibjson: {
+          title: "TypeScript em pesquisa",
+          abstract: "resumo",
+          year: "2025",
+          author: [{ name: "Ada Lovelace" }],
+          journal: { title: "J. Program." },
+          identifier: [{ type: "doi", id: "10.1000/abc" }],
+          link: [{ url: "https://ex.com/pdf" }],
+        },
+      },
+    ],
+  }));
+  assert.equal(first.source, "doaj");
+  assert.equal(first.kind, "paper");
+  assert.equal(first.author, "Ada Lovelace");
+  assert.equal((first.meta as Record<string, unknown>).doi, "10.1000/abc");
+  assert.equal(first.url, "https://ex.com/pdf");
+});
+
+test("registry: lote 5 registrado (pypi, rubygems, cratesio, doaj, npm-downloads)", () => {
+  for (const id of ["pypi", "rubygems", "cratesio", "doaj", "npm-downloads"]) {
     const built = buildAdapter(id, {});
     assert.ok(built.source, `${id} deve ter adaptador real`);
     assert.equal(built.source!.id, id);

@@ -13,6 +13,8 @@ export interface AdapterMeta {
   description: string;
   capabilities: SourceDescriptor["capabilities"];
   rateLimit: RateLimit;
+  /** true = a query é um id exato (busca de prefixo não faz sentido). */
+  lookup?: boolean;
 }
 
 export type FetchStep = (options: CollectOptions) => Promise<unknown>;

@@ -17,6 +17,7 @@ import {
 } from "./moreSources.js";
 import { SuggestSource } from "./suggest.js";
 import { INFRA_ADAPTERS } from "./infraSources.js";
+import { codeSources } from "./codeSources.js";
 
 export type AdapterFactory = (keys: ApiKeys) => SourcePort;
 
@@ -45,6 +46,7 @@ export const ADAPTERS: Record<string, AdapterFactory> = {
   openlibrary: () => openlibrary,
   devto: () => devto,
   ...INFRA_ADAPTERS,
+  ...codeSources,
 };
 
 export interface BuiltAdapter {

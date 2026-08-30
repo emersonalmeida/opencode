@@ -133,13 +133,13 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 > **ToS/restrição:** Busca pública sem chave (size<=20).
 
-| **pypi** | PyPI | api | none | code | query, limit | name, version, summary, author, license, url | https://pypi.org/pypi/{name}/json | — | PONTE(v1) |
+| **pypi** | PyPI | api | none | code | query, limit | name, version, summary, author, license, url | https://pypi.org/pypi/{name}/json | — | PRONTO |
 
-| **rubygems** | RubyGems | api | none | code | query, limit | name, version, info, downloads, authors, url | https://rubygems.org/api/v1/search.json | — | PONTE(v1) |
+| **rubygems** | RubyGems | api | none | code | query, limit | name, version, info, downloads, authors, url | https://rubygems.org/api/v1/search.json | — | PRONTO |
 
-| **cratesio** | crates.io | api | none | code | query, limit | name, version, description, downloads, recent_downloads, url | https://crates.io/api/v1/crates?q= | — | PONTE(v1) |
+| **cratesio** | crates.io | api | none | code | query, limit | name, version, description, downloads, recent_downloads, url | https://crates.io/api/v1/crates?q= | — | PRONTO |
 
-| **doaj** | DOAJ (open access) | api | none | academic | query, limit | title, doi, journal, authors, year, url | https://doaj.org/api/search/articles/{query} | — | PONTE(v1) |
+| **doaj** | DOAJ (open access) | api | none | academic | query, limit | title, doi, journal, authors, year, url | https://doaj.org/api/search/articles/{query} | — | PRONTO |
 
 | **openfoodfacts** | Open Food Facts | api | none | custom | query, limit | code, name, brands, nutriscore, nova, categories, url | https://world.openfoodfacts.org/cgi/search.pl?search_terms=&search_simple=1&action=process&json=1 | — | PONTE(v1) |
 
@@ -186,7 +186,7 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 | **openlibrary-trending** | Open Library (em alta) | api | none | trends, custom | period, limit | title, author, year, score, url | https://openlibrary.org/trending/{daily\|weekly\|monthly}.json | — | PONTE(v1) |
 
-| **npm-downloads** | npm downloads | api | none | code, trends | packages, period, limit | package, downloads, period | https://api.npmjs.org/downloads/point/{last-week}/{pkgs} | — | PONTE(v1) |
+| **npm-downloads** | npm downloads | api | none | code, trends | packages, period, limit | package, downloads, period | https://api.npmjs.org/downloads/point/{last-week}/{pkgs} | — | PRONTO |
 
 > **ToS/restrição:** Ate 20 pacotes por chamada.
 
