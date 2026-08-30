@@ -205,9 +205,9 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 | id | label | método | auth | capacidades | parâmetros | dados | recurso | chaves | status |
 |----|-------|--------|------|-------------|------------|-------|---------|--------|--------|
-| **apple** | Apple App Store (reviews) | api | none | reviews, media | appId, country, countries, mode, limit | title, rating, author, date, version, country, helpful, text | amp-api apps.apple.com/api/apps/v1/catalog/{cc}/apps/{id}/reviews + SSR serialized-server-data + RSS itunes customerreviews | — | PONTE(v1) |
+| **apple** | Apple App Store (reviews) | api | none | reviews, media | appId, country, countries, mode, limit | title, rating, author, date, version, country, helpful, text | amp-api apps.apple.com/api/apps/v1/catalog/{cc}/apps/{id}/reviews + RSS itunes customerreviews (fallback) | — | PRONTO |
 
-> **ToS/restrição:** 3 fontes combinadas (amp-api primaria ~20/pag, SSR suplementar, RSS fallback); teto 500-750 reviews/pais; pau 2 fases (sweep SSR 8 paises + amp-api deep only top storefronts).
+> **ToS/restrição:** amp-api primaria (l=pt-BR, sort mostRecent/mostHelpful por engine); RSS fallback. SSR sweep multi-pais do v1 nao portado (erro honesto se amp-api 429).
 
 | **googleplay** | Google Play (reviews/apps) | api | none | reviews, media | appId, term, action, country, lang, num, collection, category, sort | title, score, author, date, version, thumbsUp, text, appInfo | google-play-scraper (npm) | — | PONTE(v1) |
 

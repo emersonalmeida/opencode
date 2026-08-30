@@ -11,6 +11,7 @@ import { custom, embedSearch, feed, itunesProxy, paste } from "../src/adapters/i
 import { cratesio, doaj, npmDownloads, pypi, rubygems } from "../src/adapters/codeSources.js";
 import { archive, itchio, openfoodfacts, podcasts, producthunt, tvmaze } from "../src/adapters/mediaSources.js";
 import { lobsters, suggestProvider, web } from "../src/adapters/uni.js";
+import { apple } from "../src/adapters/apple.js";
 import {
   brasilapiFeriados, brasilapiTaxas, crypto, frankfurter, githubTrending, ibgeNomes, mastodonTrends,
   onthisday, openlibraryTrending, steamtop, trending, weather, wikitop, wikiviews,
@@ -653,6 +654,48 @@ test("registry: lote 8 registrado (suggest-provider, web, lobsters)", () => {
     assert.ok(built.source, `${id} deve ter adaptador real`);
     assert.equal(built.source!.id, id);
   }
+});
+
+test("apple: normaliza reviews (shape amp-api/SSR)", () => {
+  const items = mapItems(apple, {
+    id: "284882215",
+    cc: "br",
+    sort: "mostrecent",
+    reviews: [
+      { id: "1", rating: 4, title: "Muito bom", text: "App estável e rápido no dia a dia.", author: "Maria", date: "2026-08-29", version: "470.0" },
+      { id: "2", rating: 2, title: "Lento", text: "Abriu várias vezes depois da atualização até responder.", author: "Joao", date: "2026-08-28", version: "470.0" },
+    ],
+  });
+  assert.equal(items.length, 2);
+  const first = one(items);
+  assert.equal(first.source, "apple");
+  assert.equal(first.kind, "review");
+  assert.equal(first.score, 4);
+  assert.equal(first.author, "Maria");
+  assert.equal((first.meta as Record<string, unknown>).country, "br");
+});
+
+test("apple: parseRss lê shape do feed itunes", async () => {
+  const { parseRss } = await import("../src/adapters/apple.js");
+  const reviews = parseRss(
+    {
+      feed: {
+        entry: [
+          { id: { label: "x1" }, "im:rating": { label: "5" }, title: { label: "Excelente" }, content: { label: "Recomendo muito este aplicativo." }, author: { label: "Ana" }, updated: { label: "2026-08-29T00:00:00-07:00" } },
+        ],
+      },
+    },
+    "br",
+  );
+  assert.equal(reviews[0]?.rating, 5);
+  assert.equal(reviews[0]?.author, "Ana");
+  assert.equal(reviews[0]?.country, "br");
+});
+
+test("registry: lote 9 registrado (apple)", () => {
+  const built = buildAdapter("apple", {});
+  assert.ok(built.source, "apple deve ter adaptador real");
+  assert.equal(built.source!.id, "apple");
 });
 
 test("ibge-nomes: ranking do censo (entry.res)", () => {
