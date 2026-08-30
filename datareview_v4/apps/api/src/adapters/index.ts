@@ -16,6 +16,7 @@ import {
   bluesky, crossref, deezer, devto, googlenews, mastodon, npm, openalex, openlibrary, steam, wikidata,
 } from "./moreSources.js";
 import { SuggestSource } from "./suggest.js";
+import { uniSources } from "./uni.js";
 import { INFRA_ADAPTERS } from "./infraSources.js";
 import { codeSources } from "./codeSources.js";
 import { mediaSources } from "./mediaSources.js";
@@ -51,6 +52,7 @@ export const ADAPTERS: Record<string, AdapterFactory> = {
   ...codeSources,
   ...mediaSources,
   ...dataSources,
+  ...uniSources,
 };
 
 export interface BuiltAdapter {

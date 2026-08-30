@@ -10,6 +10,7 @@ import { buildAdapter } from "../src/adapters/index.js";
 import { custom, embedSearch, feed, itunesProxy, paste } from "../src/adapters/infraSources.js";
 import { cratesio, doaj, npmDownloads, pypi, rubygems } from "../src/adapters/codeSources.js";
 import { archive, itchio, openfoodfacts, podcasts, producthunt, tvmaze } from "../src/adapters/mediaSources.js";
+import { lobsters, suggestProvider, web } from "../src/adapters/uni.js";
 import {
   brasilapiFeriados, brasilapiTaxas, crypto, frankfurter, githubTrending, ibgeNomes, mastodonTrends,
   onthisday, openlibraryTrending, steamtop, trending, weather, wikitop, wikiviews,
@@ -89,13 +90,6 @@ test("steam: normaliza jogos (preço em centavos)", () => {
   assert.equal(first.score, 93);
   assert.ok(first.url!.includes("/app/570/"));
   assert.match(first.text!, /BRL 30.00/);
-});
-
-test("lobsters: sem JSON público (endpoint descontinuado)", () => {
-  const built = buildAdapter("lobsters", {});
-  assert.equal(built.source, undefined);
-  assert.equal(built.manifest?.id, "lobsters");
-  assert.equal(built.manifest?.status, "bridge");
 });
 
 test("googlenews: normaliza itens do RSS", () => {
@@ -606,13 +600,59 @@ test("brasilapi-taxas: normaliza taxas do BC", () => {
   assert.equal(first.score, 10.75);
   assert.match(first.text!, /10\.75/);
 });
-
 test("frankfurter: normaliza câmbio (engine = base, query = símbolos)", () => {
   const items = mapItems(frankfurter, { base: "USD", date: "2026-08-29", rates: { BRL: 5.4, EUR: 0.9 } });
   assert.equal(items.length, 2);
   const brl = one(items);
   assert.match(brl.title!, /1 USD = 5,4 BRL/);
   assert.equal((brl.meta as Record<string, unknown>).symbol, "BRL");
+});
+
+test("suggest-provider: normaliza sugestões bing", () => {
+  const first = one(mapItems(suggestProvider, { provider: "bing", label: "Bing", query: "typescript", suggs: ["typescript tutorial", "typescript handbook"] }));
+  assert.equal(first.source, "suggest-provider");
+  assert.equal(first.kind, "suggestion");
+  assert.equal(first.title, "typescript tutorial");
+  assert.equal(first.score, 1000);
+  const items = mapItems(suggestProvider, { provider: "bing", label: "Bing", query: "typescript", suggs: ["a", "b"] });
+  assert.equal(items[1]?.score, 900);
+});
+
+test("web: extrai artigo de URL (action page)", () => {
+  const items = mapItems(web, { action: "page", url: "https://example.com/a", article: { title: "Artigo Teste", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\nSegundo paragrafo com conteudo suficiente para passar no filtro de tamanho minimo de quarenta caracteres ok ok.", words: 31 }, links: ["https://x.com"] });
+  const first = one(items);
+  assert.equal(first.source, "web");
+  assert.equal(first.kind, "document");
+  assert.equal(first.title, "Artigo Teste");
+  assert.equal((first.meta as Record<string, unknown>).links, 1);
+});
+
+test("web: action feed usa parseFeed", () => {
+  const xml = `<rss><channel><item><title>Primeiro</title><link>https://e.com/1</link><description>Descricao do item</description></item></channel></rss>`;
+  const first = one(mapItems(web, { action: "feed", url: "https://e.com/feed", xml }));
+  assert.equal(first.source, "web");
+  assert.equal(first.kind, "article");
+  assert.equal(first.title, "Primeiro");
+});
+
+test("lobsters: normaliza timeline da tag", () => {
+  const first = one(mapItems(lobsters, [
+    { short_id: "abc123", title: "TypeScript 6 chegou", description: "Resumo", short_id_url: "https://lobste.rs/s/abc123", url: "https://e.com/x", comment_count: 4, score: 10, created_at: "2026-08-30T00:00:00Z", submitter_user: { username: "joe" } },
+  ]));
+  assert.equal(first.source, "lobsters");
+  assert.equal(first.kind, "post");
+  assert.equal(first.title, "TypeScript 6 chegou");
+  assert.equal(first.author, "joe");
+  assert.equal(first.score, 10);
+  assert.equal((first.meta as Record<string, unknown>).comments, 4);
+});
+
+test("registry: lote 8 registrado (suggest-provider, web, lobsters)", () => {
+  for (const id of ["suggest-provider", "web", "lobsters"]) {
+    const built = buildAdapter(id, {});
+    assert.ok(built.source, `${id} deve ter adaptador real`);
+    assert.equal(built.source!.id, id);
+  }
 });
 
 test("ibge-nomes: ranking do censo (entry.res)", () => {

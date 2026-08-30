@@ -24,9 +24,9 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 >
 > **Operação:** Testado no v1: 6 itens reais por termo (demo 'nubank').
 
-| **suggest-provider** | Autocomplete multi-provedor | scrape | none | trends, custom | provider, query, limit, lang | text, relevance | POST /functions/v1/uni-suggest-provider | — | PONTE(v1) |
+| **suggest-provider** | Autocomplete multi-provedor | scrape | none | trends, custom | provider, query, limit, lang | text, relevance | autocomplete público: bing/duckduckgo/brave/yahoo/yandex/baidu/naver/amazon/ebay/wikipedia (engine = provedor) | — | PRONTO |
 
-> **ToS/restrição:** 10 provedores: bing, duckduckgo, brave, yahoo, yandex, baidu, naver, amazon, ebay, wikipedia. Cache 10min, timeout 8s.
+> **ToS/restrição:** 10 provedores públicos sem chave; falha de um provedor vira erro honesto. Brave/yahoo podem rate-limitar datacenter.
 >
 > **Operação:** Bloqueados/nao implementados: tiktok, pinterest, twitch, soundcloud, spotify, walmart/alibaba, apple/play, instagram/x, tenor.
 
@@ -86,9 +86,9 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 > **ToS/restrição:** Feed publico (~50 lancamentos/30min TTL cache); GraphQL v2 com token enriquece votes/comments/topics. Testado (6 itens demo).
 
-| **web** | Web universal (extrator) | other | none | search, custom | action, url, content, limit | title, text, links, feed_items, meta | fetch + extractArticle (Readability-like) + parseFeed + splitTextItems | — | PONTE(v1) |
+| **web** | Web universal (extrator) | other | none | search, custom | action, url, content, limit | title, text, links, feed_items, meta | fetch + extractArticle (regex Readability-like) + parseFeed + splitTextItems | — | PRONTO |
 
-> **ToS/restrição:** MAX_BYTES 25MB; timeout 30s; MAX_TEXT_CHARS 20000; MAX_FEED_ITEMS 100. Necessita URL/texto.
+> **ToS/restrição:** 25MB limit; timeout 30s; MAX_TEXT_CHARS 20000; MAX_FEED_ITEMS 100. Necessita URL/texto. PDF fora do escopo nativo (erro honesto).
 
 
 ## Conectores declarativos (uniConnectors) (17)
@@ -103,7 +103,9 @@ Legenda de status: **PRONTO** = coletor ativo no v4; **PONTE(v1)** = coletor fun
 
 > **ToS/restrição:** Forem API pública por tag (query vira tag); per_page<=30.
 
-| **lobsters** | Lobsters | api | none | news, social | query, limit | title, url, author, score, comments_count | https://lobste.rs/search.json | — | PONTE(v1) |
+| **lobsters** | Lobsters | api | none | news, social | query, limit | title, url, author, score, comments_count | https://lobste.rs/t/{tag}.json \| /newest.json | — | PRONTO |
+
+> **ToS/restrição:** Busca full-text exige login; v4 usa timeline da tag (query) ou /newest (vazio).
 
 | **mastodon** | Mastodon | api | none | social | query, hashtag, limit | id, content, author, favourites, reblogs, created, url | https://mastodon.social/api/v1/timelines/tag/{tag} (busca real portada; /api/v2/search precisa de token) | — | PRONTO |
 
