@@ -17,6 +17,9 @@ importers:
       '@v6/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@v6/sources':
+        specifier: workspace:*
+        version: link:../../packages/sources
       react:
         specifier: ^19.1.0
         version: 19.2.8

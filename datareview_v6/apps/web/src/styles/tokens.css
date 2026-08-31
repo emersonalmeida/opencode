@@ -1,0 +1,43 @@
+/**
+ * Design tokens — espelho dos tokens do legado v1 (shadcn-style HSL variables),
+ * sem o custo do Tailwind/shadcn. Uma variável = uma decisão de design.
+ *
+ * Escopo: dark por padrão (index.html marca .dark); light também disponível
+ * via `data-theme="light"` no <html> ou media query.
+ */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 42%;
+  --border: 240 5.9% 86%;
+  --input: 240 5.9% 86%;
+  --ring: 240 5.9% 10%;
+  --primary: 240 5.9% 10%;
+  --primary-foreground: 0 0% 98%;
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: 240 10% 10%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 10%;
+  --card-foreground: 0 0% 98%;
+  --muted: 240 3.7% 18%;
+  --muted-foreground: 240 5% 68%;
+  --border: 240 3.7% 22%;
+  --input: 240 3.7% 22%;
+  --ring: 240 4.9% 83.9%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 240 5.9% 10%;
+  --accent: 240 3.7% 18%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 50%;
+  --destructive-foreground: 0 0% 98%;
+}
