@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "node --import tsx --test test/web.test.tsx"
+    "test": "node --import tsx --test test/web.test.tsx && vitest run test/suggestCore.test.ts"
   },
   "dependencies": {
     "@v6/contracts": "workspace:*",
@@ -23,6 +23,7 @@
     "@vitejs/plugin-react": "^4.4.1",
     "tsx": "^4.19.2",
     "typescript": "^5.8.3",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vitest": "^4.1.11"
   }
 }
