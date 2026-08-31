@@ -8,6 +8,7 @@ import { renderToString } from "react-dom/server";
 import { MemoryRouter } from "react-router";
 import { AppRoutes } from "../src/App.js";
 import { formatCount, greeting, statusLabel } from "../src/lib/format.js";
+import { chavesAtivas, resetChaves, setChave, type StorageLike } from "../src/lib/motor.js";
 
 function render(initialEntries: string[]): string {
   return renderToString(
@@ -47,4 +48,22 @@ test("helpers puros de formatação", () => {
   assert.equal(statusLabel("bridge"), "PONTE(v1)");
   assert.equal(statusLabel("planned"), "PLANEJADO");
   assert.ok(["Bom dia", "Boa tarde", "Boa noite", "Boa madrugada"].includes(greeting()));
+});
+
+test("BYOK: setChave/resetChaves persistem e limpam o storage", () => {
+  const store = new Map<string, string>();
+  const fake: StorageLike = {
+    getItem: (k) => store.get(k) ?? null,
+    setItem: (k, v) => { store.set(k, v); },
+    removeItem: (k) => { store.delete(k); },
+  };
+
+  assert.deepEqual(chavesAtivas(), {});
+  setChave("SERPAPI_KEY", " abc ", fake);
+  assert.equal(chavesAtivas().SERPAPI_KEY, "abc");
+  const raw = store.get("datareview.v6.keys");
+  assert.ok(raw && raw.includes("SERPAPI_KEY"));
+
+  resetChaves(fake);
+  assert.deepEqual(chavesAtivas(), {});
 });
