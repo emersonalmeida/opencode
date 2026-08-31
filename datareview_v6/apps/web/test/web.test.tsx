@@ -16,6 +16,11 @@ function render(initialEntries: string[]): string {
   );
 }
 
+test("Suggest renderiza (SSR smoke)", () => {
+  const html = render(["/suggest"]);
+  assert.match(html, /Suggest Explorer/);
+});
+
 test("Design System renderiza (SSR smoke)", () => {
   const html = render(["/design-system"]);
   assert.match(html, /Design System/);

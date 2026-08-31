@@ -477,6 +477,20 @@ blockquote {
   margin: 0.7rem 0;
 }
 
+/* barra de progresso da coleta */
+.proto {
+  height: 0.5rem;
+  background: hsl(var(--muted));
+  border-radius: 999px;
+  overflow: hidden;
+}
+.proto-bar {
+  height: 100%;
+  background: hsl(var(--primary));
+  border-radius: 999px;
+  transition: width 200ms ease;
+}
+
 /* ------------------------------------------------------------ motion/a11y -- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

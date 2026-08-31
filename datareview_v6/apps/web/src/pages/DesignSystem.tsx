@@ -17,11 +17,11 @@ const SECTIONS = [
 
 const TYPE_SCALE = [
   { cls: "fluid-display", label: "Display", spec: "clamp(1.875rem, 4vw, 2.25rem) · 700 · -0.02em", sample: "Análise de reviews" },
-  { cls: "fluid-title", label: "Título", spec: "clamp(1.25rem, 2.5vw,  ​1.5rem) · 600", sample: "Dashboard de dados" },
+  { cls: "fluid-title", label: "Título", spec: "clamp(1.25rem, 2.5vw,  1.5rem) · 600", sample: "Dashboard de dados" },
   { cls: "", label: "Corpo", spec: "1rem · 400 · 1.6", sample: "Reviews das lojas, deduplicadas por id." },
   { cls: "text-sm", label:"Corpo pequeno", spec:"0.875rem · 400", sample:"Atualizado agora há pouco" },
   { cls: "text-xs", label:"Caption", spec:"0.75rem · muted", sample:"8 apps · 21.432 reviews" },
-  { cls: "mono", label:"Mono", spec:"ui-monospace ·  ​0.8rem", sample:"aso:dataset:v1" },
+  { cls: "mono", label:"Mono", spec:"ui-monospace ·  0.8rem", sample:"aso:dataset:v1" },
 ];
 
 const SPACING = [
