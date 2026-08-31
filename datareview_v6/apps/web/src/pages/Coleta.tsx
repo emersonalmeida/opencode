@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import type { CollectResponse, NormalizedItem } from "@v6/contracts";
-import { ativas, ativaCount, coletar } from "../lib/motor";
+import { ativas, ativaCount, coletar, chavesAtivas, setChave, resetChaves, type ChaveNome } from "../lib/motor";
 
 type RunState =
   | { phase: "idle" }
@@ -14,6 +14,25 @@ export function Coleta() {
   const [limit, setLimit] = useState("10");
   const [fonte, setFonte] = useState("");
   const [state, setState] = useState<RunState>({ phase: "idle" });
+  const CHAVES_UI: ChaveNome[] = ["SERPAPI_KEY", "YOUTUBE_API_KEY", "PRODUCT_HUNT_TOKEN"];
+const chavesVazias = (): Record<ChaveNome, string> => ({ SERPAPI_KEY: "", YOUTUBE_API_KEY: "", PRODUCT_HUNT_TOKEN: "" });
+const [chaves, setChavesState] = useState<Record<ChaveNome, string>>(() => ({ ...chavesVazias(), ...chavesAtivas() }));
+  const [msgChaves, setMsgChaves] = useState("");
+
+  function aplicarChaves() {
+    let aplicadas = 0;
+    (Object.keys(chaves) as ChaveNome[]).forEach((n) => {
+      if (chaves[n]?.trim()) { setChave(n, chaves[n] ?? ""); aplicadas++; }
+    });
+    if (aplicadas > 0) setMsgChaves(`${aplicadas} chave(s) aplicada(s) no browser (nunca enviamos p/ servidor)..localStorage`);
+    else setMsgChaves("Nenhuma chave preenchida.");
+  }
+
+  function limparChaves() {
+    setChavesState(chavesVazias());
+    resetChaves();
+    setMsgChaves("Chaves removidas do browser.");
+  }
 
   const fontes = useMemo(() => ativas, []);
 
@@ -38,6 +57,31 @@ export function Coleta() {
         {ativaCount()} fontes públicas ativas — motor v6, sem backend. 58
         Também dá pra filtrar por fonte e definir limite.
       </p>
+
+      <details className="card" style={{ marginBottom: "1.25rem" }}>
+        <summary>API keys (BYOK) — opcional</summary>
+        <p className="muted" style={{ marginBottom: "0.75rem" }}>
+          Chaves ficam só no seu navegador (localStorage) e nunca saem dele; aplicadas às próximas coletas.
+        </p>
+        <div className="row" style={{ rowGap: "0.5rem", flexWrap: "wrap" }}>
+          {CHAVES_UI.map((n) => (
+            <div className="form-field" key={n} style={{ minWidth: 220, flex: 1 }}>
+              <label>{n}</label>
+              <input
+                type="password"
+                autoComplete="off"
+                value={chaves[n] ?? ""}
+onChange={(e) => setChavesState({ ...chaves, [n]: e.target.value })}
+              />
+            </div>
+          ))}
+        </div>
+        <div className="row" style={{ marginTop: "0.75rem", gap: "0.5rem" }}>
+          <button type="button" onClick={aplicarChaves}>Aplicar</button>
+          <button type="button" className="btn-secondary" onClick={limparChaves}>Limpar</button>
+          {msgChaves && <span className="muted">{msgChaves}</span>}
+        </div>
+      </details>
 
       <form onSubmit={handleRun} className="card" style={{ marginBottom: "1.25rem" }}>
         <div className="row">

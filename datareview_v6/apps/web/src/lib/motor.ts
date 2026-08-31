@@ -48,6 +48,7 @@ export const grupos = catalogo.reduce<Record<string, number>>((acc,c) => {
   return acc;
 }, {});
 export const ativas = motor.enabled;
+export type ChaveNome = "SERPAPI_KEY" | "YOUTUBE_API_KEY" | "PRODUCT_HUNT_TOKEN";
 
 function persistir(storage: StorageLike | null) {
   if (!storage) return;
