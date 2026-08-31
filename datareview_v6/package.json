@@ -11,7 +11,7 @@
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
-    "local": "pnpm install && pnpm -r typecheck && pnpm -r test && pnpm --filter @v6/sources demo"
+    "local": "pnpm install && pnpm -r typecheck && pnpm -r test && pnpm --filter @v6/web build && pnpm --filter @v6/sources demo"
   },
   "packageManager": "pnpm@11.24.0",
   "devDependencies": {

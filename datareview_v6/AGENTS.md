@@ -8,10 +8,17 @@
 
 ## Arquitetura
 
-- Monorepo pnpm: packages/contracts, packages/domain, packages/sources (apps/ futuro).
+- Monorepo pnpm: packages/contracts, packages/domain, packages/sources, apps/web (front da v1 sobre o motor v6, sem backend).
 - packages/sources: src/adapters/ (8 fontes ativas portadas da v4) src/catalog/ (59+ opt-in) src/sources.ts (registry runtime createSources/sourcesFromEnv/collectAll) src/keys.ts.
 - Ativas por padrao (sem-auth): suggest, trends, serp, youtube, googleplay, apple, producthunt, reclameaqui. Todas as outras continuam no catalogo como opt-in.
 - Testes: node:test + tsx (test/sources.test.ts, test/catalog.test.ts).
+
+## Front web v6 (apps/web
+
+- Stack: React 19 + Vite + react-router (Shell v4; Home/Coleta/Fontes/NotFound). Sem backend: `src/lib/motor.ts` e o bridge que instancia `@v6/sources` (createSources/sourcesFromEnv) e expoe `coletar/`catalogo/`grupos/`ativas`.
+- Comandos (via filter @v6/web): `dev` (vite), `build` (vite build), `typecheck` (tsc --noEmit), `test` (node --import tsx --test test/web.test.tsx).
+- Testes: SSR smoke das 4 rotas + NotFound + helpers puros de formatacao (test/web.test.tsx).
+- O `pnpm local` raiz roda: install+typecheck global+test global+build web+demo do nucleo.
 
 ## Armadilhas do ambiente
 
