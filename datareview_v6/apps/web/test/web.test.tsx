@@ -16,6 +16,11 @@ function render(initialEntries: string[]): string {
   );
 }
 
+test("Design System renderiza (SSR smoke)", () => {
+  const html = render(["/design-system"]);
+  assert.match(html, /Design System/);
+});
+
 test("Home renderiza (SSR smoke) com identidade v6", () => {
   const html = render(["/"]);
   assert.match(html, /Coleta e análise multi-fonte de dados públicos/);
